@@ -1,0 +1,10 @@
+risinghope/Binaries
+risinghope/DerivedDataCache
+risinghope/Intermediate
+risinghope/Saved
+*.sln
+*.sdf
+*.suo
+risinghope/.vs/
+*.db-shm
+*.opendb
