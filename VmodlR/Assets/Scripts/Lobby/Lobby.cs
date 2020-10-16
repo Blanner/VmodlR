@@ -57,6 +57,19 @@ public class Lobby : MonoBehaviourPunCallbacks
         controlPanel.SetActive(true);
     }
 
+    #if UNITY_EDITOR
+
+    void Update()
+    {
+        if(Input.GetButtonDown("Fire1"))
+        {
+            PhotonNetwork.NickName = "UnityEditor";
+            Connect();
+        }
+    }
+
+    #endif
+
     #endregion
 
     #region Public Methods
@@ -70,6 +83,7 @@ public class Lobby : MonoBehaviourPunCallbacks
 
         if(PhotonNetwork.IsConnected)
         {
+            Debug.Log("Trying to join a random room...");
             PhotonNetwork.JoinRandomRoom();
         }
         else
@@ -88,6 +102,7 @@ public class Lobby : MonoBehaviourPunCallbacks
         if(isConnecting)
         {
             Debug.Log("OnConnectedToMaster(). Client is connected to master lobby and ready to join a room.");
+            Debug.Log("Trying to join a random room...");
             PhotonNetwork.JoinRandomRoom();
         }
     }
@@ -126,7 +141,7 @@ public class Lobby : MonoBehaviourPunCallbacks
     /// </remarks>
     public override void OnJoinedRoom()
     {
-        Debug.Log("Client joined a room.");
+        Debug.Log("Client joined a room as Player " + PhotonNetwork.CurrentRoom.PlayerCount);
 
         // #Critical: We only load if we are the first player, else we rely on  PhotonNetwork.AutomaticallySyncScene to sync our instance scene.
         if (PhotonNetwork.CurrentRoom.PlayerCount == 1)
