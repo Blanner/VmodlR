@@ -27,6 +27,9 @@ public class LaserPointer : OVRCursor
     public GameObject cursorVisual;
     public float maxLength = 10.0f;
 
+    [Tooltip("Gamepad button to disable/enable laserpoint visualization")]
+    public OVRInput.Button joyPadToggleButton = OVRInput.Button.One;
+
     [SerializeField]
     private LaserBeamBehavior _laserBeamBehavior;
     bool m_restoreOnInputAcquired = false;
@@ -84,7 +87,12 @@ public class LaserPointer : OVRCursor
 
     private void LateUpdate()
     {
-        lineRenderer.SetPosition(0, _startPoint);
+        if(OVRInput.GetDown(joyPadToggleButton))
+        {
+            lineRenderer.enabled = !lineRenderer.enabled;
+        }
+
+       lineRenderer.SetPosition(0, _startPoint);
         if (_hitTarget)
         {
             lineRenderer.SetPosition(1, _endPoint);
