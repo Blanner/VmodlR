@@ -61,7 +61,7 @@ public class Lobby : MonoBehaviourPunCallbacks
 
     void Update()
     {
-        if(Input.GetButtonDown("Fire1"))
+        if(Input.GetButtonDown("Fire2"))
         {
             PhotonNetwork.NickName = "UnityEditor";
             Connect();

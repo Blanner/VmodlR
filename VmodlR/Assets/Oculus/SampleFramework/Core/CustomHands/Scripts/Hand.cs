@@ -211,6 +211,8 @@ namespace OVRTouchSample
 
             float pinch = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, m_controller);
             m_animator.SetFloat("Pinch", pinch);
+
+            //Debug.Log(transform.name + ": AnimState: Pinch: " + pinch + ", IndexPose: " + (int)handPoseId + ", Flex: " + flex + ",  thumbsWeight: " + thumbsUp + ", Index weight: " + point);
         }
 
         private float m_collisionScaleCurrent = 0.0f;

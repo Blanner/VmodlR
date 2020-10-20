@@ -44,11 +44,12 @@ public class HandedInputSelector : MonoBehaviour
         if(c == OVRInput.Controller.LTouch)
         {
             t = m_CameraRig.leftHandAnchor;
+            m_InputModule.rayTransform = t;
         }
         else
         {
-            t = m_CameraRig.rightHandAnchor;
+            //use predefined raytransform for right controller
+            //t = m_CameraRig.rightHandAnchor;
         }
-        m_InputModule.rayTransform = t;
     }
 }
