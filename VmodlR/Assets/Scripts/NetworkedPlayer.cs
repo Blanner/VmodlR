@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Photon.Pun;
+using Photon.Voice.PUN;
 
 /// <summary>
 /// This class handles the interaction between the player prefab and the photon networking environment.
@@ -11,7 +12,7 @@ using Photon.Pun;
 /// </summary>
 [RequireComponent(typeof(PhotonView))]
 
-public class NetworkedPlayer : MonoBehaviour
+public class NetworkedPlayer : MonoBehaviourPunCallbacks
 {
     public GameObject UIHelpersGO;
     public GameObject CameraRigGO;
@@ -21,9 +22,13 @@ public class NetworkedPlayer : MonoBehaviour
 
     public GameObject ThirdPersonBody;
 
+    private PhotonVoiceView photonVoice;
+    private PhotonView photonView;
+
     void Awake()
     {
-        PhotonView photonView = GetComponent<PhotonView>();
+        photonView = GetComponent<PhotonView>();
+        photonVoice = GetComponent<PhotonVoiceView>();
 
         //do nothing if this is the local player
         if (photonView.IsMine)
@@ -58,6 +63,7 @@ public class NetworkedPlayer : MonoBehaviour
 
             ThirdPersonBody.SetActive(false);
 
+
             return;
         }
         //if it is a remote player, remove the OVRManager as it may only exist exactly once in a scene
@@ -68,9 +74,22 @@ public class NetworkedPlayer : MonoBehaviour
 
     }
 
+    private void Update()
+    {
+        if(photonView.IsMine)
+        {
+            //Debug.Log($"Photon Voice: ViewReady: {photonVoice.IsPhotonViewReady}, Setup: {photonVoice.IsSetup}, Recorder: {photonVoice.IsRecorder}, Recording: {photonVoice.IsRecording}, IsSpeaker: {photonVoice.IsSpeaker}, Linked: {photonVoice.IsSpeakerLinked}, Speaking: {photonVoice.IsSpeaking}");
+        }
+    }
+
     private void enableHandControl(OVRTouchSample.Hand hand)
     {
         hand.enabled = true;
         hand.gameObject.GetComponent<OVRGrabber>().enabled = true;
+    }
+
+    public override void OnJoinedRoom()
+    {
+        photonVoice.Init();
     }
 }
