@@ -29,17 +29,24 @@ public class Lobby : MonoBehaviourPunCallbacks
     [SerializeField]
     private GameObject feedbackText;
 
-    [Tooltip("The maximum number of players per room")]
+    [Tooltip("The input field where players enter a new room's name")]
     [SerializeField]
-    private byte maxPlayersPerRoom = 5;
+    private InputField newRoomNameInput;
+
+    [Tooltip("Theslider where players set a new room's max player count")]
+    [SerializeField]
+    private Slider newRoomMaxPlayerSlider;
 
     #endregion
 
     #region Private Fields
 
     private bool isConnecting = false;
+    private bool isCreatingRoom = false;
 
     private string gameVersion = "1";
+
+    private string roomNameToConnectTo;
 
     #endregion
 
@@ -53,18 +60,21 @@ public class Lobby : MonoBehaviourPunCallbacks
 
     void Start()
     {
-        feedbackText.SetActive(false);
+        feedbackText.gameObject.SetActive(false);
         controlPanel.SetActive(true);
+
+        PhotonNetwork.ConnectUsingSettings();
+        PhotonNetwork.GameVersion = this.gameVersion;
     }
 
     #if UNITY_EDITOR
 
     void Update()
     {
-        if(Input.GetButtonDown("Fire2"))
+        if(Input.GetKeyDown(KeyCode.N))
         {
             PhotonNetwork.NickName = "UnityEditor";
-            Connect();
+            CreateRoomInternal("NewRoom");
         }
     }
 
@@ -74,17 +84,49 @@ public class Lobby : MonoBehaviourPunCallbacks
 
     #region Public Methods
 
-    public void Connect()
+    private void CreateRoomInternal(string newRoomName)
+    {
+        Debug.Log("Trying to create room");
+        byte maxPlayers = (byte)newRoomMaxPlayerSlider.value;
+
+        feedbackText.SetActive(true);
+        controlPanel.SetActive(false);
+
+        roomNameToConnectTo = newRoomName;
+
+        isConnecting = true;
+        isCreatingRoom = true;
+
+        if (PhotonNetwork.IsConnected)
+        {
+            PhotonNetwork.CreateRoom(newRoomName, new RoomOptions { MaxPlayers = maxPlayers });
+        }
+        else
+        {
+            PhotonNetwork.ConnectUsingSettings();
+            PhotonNetwork.GameVersion = this.gameVersion;
+        }
+    }
+
+    public void CreateRoom()
+    {
+        CreateRoomInternal(newRoomNameInput.text);
+    }
+
+    public void Connect(string roomName)
     {
         feedbackText.SetActive(true);
         controlPanel.SetActive(false);
 
+        roomNameToConnectTo = roomName;
+
         isConnecting = true;
+        isCreatingRoom = false;
 
         if(PhotonNetwork.IsConnected)
         {
-            Debug.Log("Trying to join a random room...");
-            PhotonNetwork.JoinRandomRoom();
+            Debug.Log("Trying to join room " + roomName);
+            PhotonNetwork.JoinRoom(roomName);
         }
         else
         {
@@ -99,11 +141,22 @@ public class Lobby : MonoBehaviourPunCallbacks
 
     public override void OnConnectedToMaster()
     {
-        if(isConnecting)
+        Debug.Log("OnConnectedToMaster(). Client is connected to master lobby and ready to join a room.");
+        if (isConnecting)
         {
-            Debug.Log("OnConnectedToMaster(). Client is connected to master lobby and ready to join a room.");
-            Debug.Log("Trying to join a random room...");
-            PhotonNetwork.JoinRandomRoom();
+            if(isCreatingRoom)
+            {
+                PhotonNetwork.CreateRoom(roomNameToConnectTo, new RoomOptions { MaxPlayers = (byte)newRoomMaxPlayerSlider.value });
+            }
+            else
+            {
+                Debug.Log("Trying to join a random room...");
+                PhotonNetwork.JoinRoom(roomNameToConnectTo);
+            }
+        }
+        else
+        {
+            PhotonNetwork.JoinLobby();
         }
     }
 
@@ -112,7 +165,34 @@ public class Lobby : MonoBehaviourPunCallbacks
         Debug.Log("No random room available. Creating a new one.\nCalling: PhotonNetwork.CreateRoom");
 
         // #Critical: we failed to join a random room, maybe none exists or they are all full. No worries, we create a new room.
-        PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = this.maxPlayersPerRoom });
+        //PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = this.maxPlayersPerRoom });
+        isConnecting = false;
+        isCreatingRoom = false;
+
+        feedbackText.gameObject.SetActive(false);
+        controlPanel.SetActive(true);
+    }
+
+    public override void OnJoinRoomFailed(short returnCode, string message)
+    {
+        Debug.Log("Join room failed: " + message);
+
+        isConnecting = false;
+        isCreatingRoom = false;
+
+        feedbackText.gameObject.SetActive(false);
+        controlPanel.SetActive(true);
+    }
+
+    public override void OnCreateRoomFailed(short returnCode, string message)
+    {
+        Debug.Log("Failed to create a room: " + message);
+
+        isConnecting = false;
+        isCreatingRoom = false;
+
+        feedbackText.gameObject.SetActive(false);
+        controlPanel.SetActive(true);
     }
 
     /// <summary>
@@ -121,11 +201,12 @@ public class Lobby : MonoBehaviourPunCallbacks
     public override void OnDisconnected(DisconnectCause cause)
     {
         Debug.LogError("Disconnected from Server.");
-        feedbackText.SetActive(false);
+        feedbackText.gameObject.SetActive(false);
         controlPanel.SetActive(true);
 
         // #Critical: we failed to connect or got disconnected. There is not much we can do. Typically, a UI system should be in place to let the user attemp to connect again.
         isConnecting = false;
+        isCreatingRoom = false;
     }
 
     /// <summary>
