@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Connector : MonoBehaviour
+public class Connector : NetworkModelElement
 {
     /// <summary>
     /// The class where the arrow head that belongs to this connector - if there is one - does not point. If none exists, it is irrelevant which class is the target and which the origin class
@@ -17,25 +17,122 @@ public class Connector : MonoBehaviour
     /// </summary>
     public ArrowHead arrowHead;
 
+    public ConnectorGrabVolume originGrabVolume;
+    public ConnectorGrabVolume targetGrabVolume;
+
     private Vector3 ConnectorMidPosition { get { return transform.GetChild(0).position; } }
 
+    /// <summary>
+    /// The position relative to the origin class where the origin end of the connection should sit
+    /// </summary>
+    private Vector3 originLocalPosition;
+    /// <summary>
+    /// THe position relative to the target class where the target end of the connection should sit
+    /// </summary>
+    private Vector3 targetLocalPosition;
+
+
     // Start is called before the first frame update
-    void Start()
+    new void Start()
     {
-        
+        base.Start();
     }
 
-    // Update is called once per frame
-    void Update()
+    public void DetachFromClass(ConnectorGrabVolume connectorEndGrabVolume)
     {
-        
+        if(originGrabVolume == connectorEndGrabVolume)
+        {
+            if (originClass != null)
+            {
+                originClass.RemoveConnector(this);
+            }
+            originClass = null;
+        }
+        else if(targetGrabVolume == connectorEndGrabVolume)
+        {
+            if(targetClass != null)
+            {
+                targetClass.RemoveConnector(this);
+            }
+            targetClass = null;
+        }
+        else
+        {
+            Debug.LogError("Called DetachFromClass() with a grab volume not belonging to this connector.");
+        }
     }
 
-    public void UpdatePosition()
+    public void AttachToClass(ConnectorGrabVolume connectorEndGrabVolume)
     {
+        Vector3 attachSearchOrigin = connectorEndGrabVolume.transform.position;
+        Vector3 attachSearchDirection;
+
+        if (originGrabVolume == connectorEndGrabVolume)
+        {
+            attachSearchDirection = transform.forward * -1.0f;
+            //check if we can attach to a class
+            Vector3 newConnectionPointWorld;
+            originClass = calculateNewConnectionToClass(attachSearchOrigin, attachSearchDirection, out newConnectionPointWorld);
+            if(originClass != null)
+            {
+                originClass.AddConnector(this);
+                updateConnectionPointToOriginClass(newConnectionPointWorld);
+            }
+            
+            UpdateTransformFromClassConnections();
+        }
+        else if (targetGrabVolume == connectorEndGrabVolume)
+        {
+            attachSearchDirection = transform.forward;
+            //check if we can attach to a class
+            Vector3 newConnectionPointWorld;
+            targetClass = calculateNewConnectionToClass(attachSearchOrigin, attachSearchDirection, out newConnectionPointWorld);
+            if (targetClass != null)
+            {
+                targetClass.AddConnector(this);
+                updateConnectionPointToTargetClass(newConnectionPointWorld);
+            }
+            UpdateTransformFromClassConnections();
+        }
+        else
+        {
+            Debug.LogError("Called attachFromClass() with a grab volume not belonging to this connector.");
+            return;
+        }
+    }
+
+    /// <summary>
+    /// Updates the transform values of the connector and its related objects if the respective end of the connector is connected to a class.
+    /// position, rotation and scale are updated as needed for the connector line, its arrow head (if it has one) and the grab volumes (if they are not currently grabbed)
+    /// </summary>
+    public void UpdateTransformFromClassConnections()
+    {
+        RequestOwnership();
+
+        Vector3 newOriginPos;
+        Vector3 newTargetPos;
+
+        
         //calculate origin and target position of the moved connector acording to the new positions of its classes
-        Vector3 newOriginPos = calculateNewConnectionToClass(originClass);
-        Vector3 newTargetPos = calculateNewConnectionToClass(targetClass);
+        //This is done by transforming the target/origin positions local to the respective class back to global positions based on the new transform values of the classes
+        if (originClass != null)
+        {
+            newOriginPos = originClass.transform.TransformPoint(originLocalPosition);
+        }
+        else
+        {
+            newOriginPos = originGrabVolume.transform.position;
+        }
+
+        if (targetClass != null)
+        {
+            newTargetPos = targetClass.transform.TransformPoint(targetLocalPosition);
+        }
+        else
+        {
+            newTargetPos = targetGrabVolume.transform.position;
+        }
+
         //calculate the vector that describes the orientation and length of the new connector
         Vector3 newConnectorLineSegment = newTargetPos - newOriginPos; 
 
@@ -48,26 +145,46 @@ public class Connector : MonoBehaviour
         //update the position of the this connectors arrow head if it has one.
         if(arrowHead != null)
         {
-            arrowHead.UpdatePosition(newTargetPos);
+            arrowHead.UpdateTransform(newTargetPos, newConnectorLineSegment);
+        }
+        originGrabVolume.UpdateTransform(newOriginPos);
+        targetGrabVolume.UpdateTransform(newTargetPos);
+    }
+
+
+
+    private void updateConnectionPointToTargetClass(Vector3 connectionPointWorldPos)
+    {
+        if(targetClass != null)
+        {
+            targetLocalPosition = targetClass.transform.InverseTransformPoint(connectionPointWorldPos);
         }
     }
 
-    private Vector3 calculateNewConnectionToClass(Class connectingClass)
+    private void updateConnectionPointToOriginClass(Vector3 connectionPointWorldPos)
+    {
+        if (originClass != null)
+        {
+            originLocalPosition = originClass.transform.InverseTransformPoint(connectionPointWorldPos);
+        }
+    }
+
+    private Class calculateNewConnectionToClass(Vector3 searchOrigin, Vector3 searchDirection, out Vector3 newConnectionPointWorld)
     {
         int classLayerMask = 1 << LayerMask.NameToLayer("Class");
-        foreach (RaycastHit hit in Physics.RaycastAll(new Ray(ConnectorMidPosition, (connectingClass.transform.position - transform.position)), 1000, classLayerMask))
+        RaycastHit hitInfo;
+        if (Physics.Raycast(new Ray(searchOrigin, searchDirection), out hitInfo, Properties.connectorAttachToClassDistance, classLayerMask))
         {
-            Class hitClass = hit.transform.GetComponent<Class>();
+            Class hitClass = hitInfo.transform.GetComponent<Class>();
             if (hitClass != null)
             {
-                if (hitClass == connectingClass)
-                {
-                    return hit.point;
-                }
+                newConnectionPointWorld = hitInfo.point;
+                return hitClass;
             }
         }
 
-        Debug.LogError($"Could not find new connection point for Class {connectingClass.gameObject.name} on connector {gameObject.name}");
-        return Vector3.zero;
+        //No class was hit
+        newConnectionPointWorld = Vector3.zero;
+        return null;
     }
 }

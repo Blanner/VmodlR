@@ -2,16 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Class : MonoBehaviour
+public class Class : NetworkModelElement
 {
     public List<Connector> connectors;
 
     private bool isMoving = false;
 
     // Start is called before the first frame update
-    void Start()
+    new void Start()
     {
-        UpdateConnectorPositions();
+        base.Start();
+        if(IsMine())
+        {
+            UpdateConnectorPositions();
+        }
     }
 
     // Update is called once per frame
@@ -23,9 +27,20 @@ public class Class : MonoBehaviour
         }
     }
 
+    public void AddConnector(Connector connector)
+    {
+        connectors.Add(connector);
+    }
+
+    public void RemoveConnector(Connector connector)
+    {
+        connectors.Remove(connector);
+    }
 
     public void BeginMovement()
     {
+        Debug.LogWarning("Beginning Movement");
+        RequestOwnership();
         isMoving = true;
     }
 
@@ -38,7 +53,7 @@ public class Class : MonoBehaviour
     {
         foreach (Connector connector in connectors)
         {
-            connector.UpdatePosition();
+            connector.UpdateTransformFromClassConnections();
         }
     }
 }

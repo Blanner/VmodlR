@@ -2,25 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ArrowHead : MonoBehaviour
+public class ArrowHead : NetworkModelElement
 {
     [Tooltip("The distance between the tip of the arrow and the point where the connector this arrow head sits on should end")]
     public float TipDistance;
 
     // Start is called before the first frame update
-    void Start()
+    new void Start()
     {
-        
+        base.Start();
     }
 
-    // Update is called once per frame
-    void Update()
+    public void UpdateTransform(Vector3 newPosition, Vector3 forwardDirection)
     {
-        
-    }
-
-    public void UpdatePosition(Vector3 newPosition)
-    {
+        RequestOwnership();
         transform.position = newPosition;
+        transform.rotation = Quaternion.LookRotation(forwardDirection, Vector3.up);
     }
 }
