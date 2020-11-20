@@ -2,12 +2,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// This Volume is a trigger collider that sits at one end of a connector. 
+/// It is responsible to capture the grab input of the player and telling the connector when it needs to detach/attach to a class and when it has to move based on the player grabbing and moving this volume.
+/// </summary>
+[RequireComponent(typeof(MeshRenderer), typeof(Collider))]
 public class ConnectorGrabVolume : OVRGrabbable
 {
+    /// <summary>
+    /// The connector this Grab volume belongs to
+    /// </summary>
     public Connector connector;
 
+    /// <summary>
+    /// The renderer responsible for rendering the GrabVolume, when a Hand enters it.
+    /// </summary>
     private MeshRenderer meshRenderer;
 
+    /// <summary>
+    /// A list that contains all player hands that the grab volume currently contains. 
+    /// The GrabVolume is hidden when this list is empty and visible if the list has at least one element.
+    /// </summary>
     private List<GameObject> containedHands = new List<GameObject>();
 
     private new void Start()
@@ -64,7 +79,9 @@ public class ConnectorGrabVolume : OVRGrabbable
         meshRenderer.enabled = false;
     }
 
-    // Start is called before the first frame update
+    /// <summary>
+    /// Adds the entering game object to a list of hands, if the entered collider belongs to a GrabHand and shows the visual representation of the GrabVolume
+    /// </summary>
     public void OnTriggerEnter(Collider other)
     {
         if(other.gameObject.layer == LayerMask.NameToLayer("GrabHand"))
@@ -74,6 +91,10 @@ public class ConnectorGrabVolume : OVRGrabbable
         }
     }
 
+    /// <summary>
+    /// Removes the entering game object from the list of hands, if the entered collider belongs to a GrabHand 
+    /// And hides the visual representation of the GrabVolume if there is no other hand still in the grabVolume.-
+    /// </summary>
     public void OnTriggerExit(Collider other)
     {
         if(other.gameObject.layer == LayerMask.NameToLayer("GrabHand"))

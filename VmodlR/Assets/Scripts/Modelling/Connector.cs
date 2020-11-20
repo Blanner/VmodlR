@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// A connecting line between two classes that possibly has an arrow tip at one end. 
+/// It sticks to the attached classes and can be moved by the playerwhen he grabs the grab volumes belonging to this connector.
+/// </summary>
 public class Connector : NetworkModelElement
 {
     /// <summary>
@@ -38,6 +42,10 @@ public class Connector : NetworkModelElement
         base.Start();
     }
 
+    /// <summary>
+    /// Detaches the connector from the class that is currently at the end of the connector the the given ConnectorGrabVolume corresponds to.
+    /// </summary>
+    /// <param name="connectorEndGrabVolume"></param>
     public void DetachFromClass(ConnectorGrabVolume connectorEndGrabVolume)
     {
         if(originGrabVolume == connectorEndGrabVolume)
@@ -62,6 +70,10 @@ public class Connector : NetworkModelElement
         }
     }
 
+    /// <summary>
+    /// Tries to attach the end of the connector that the given ConnectorGrabVolume corresponds to to a class that this end of the connector currently points at. 
+    /// If there is no class in that direction the connectors end stays loose.
+    /// </summary>
     public void AttachToClass(ConnectorGrabVolume connectorEndGrabVolume)
     {
         Vector3 attachSearchOrigin = connectorEndGrabVolume.transform.position;
@@ -152,7 +164,11 @@ public class Connector : NetworkModelElement
     }
 
 
-
+    /// <summary>
+    /// Resets the attaching position (local to the attached class) of the connectors target end to the given world position
+    /// If the target end is currently not attached to a class nothing happens.
+    /// </summary>
+    /// <param name="connectionPointWorldPos"></param>
     private void updateConnectionPointToTargetClass(Vector3 connectionPointWorldPos)
     {
         if(targetClass != null)
@@ -161,6 +177,10 @@ public class Connector : NetworkModelElement
         }
     }
 
+    /// <summary>
+    /// Resets the attaching position (local to the attached class) of the connectors origin end to the given world position
+    /// If the origin end is currently not attached to a class nothing happens.
+    /// </summary>
     private void updateConnectionPointToOriginClass(Vector3 connectionPointWorldPos)
     {
         if (originClass != null)
@@ -169,6 +189,12 @@ public class Connector : NetworkModelElement
         }
     }
 
+    /// <summary>
+    /// Checks if there is a class in the given search direction that is less than Properties.connectorAttachToClassDistance meters away when measured from the given searchOrigin
+    /// If so this class is returned and 
+    /// </summary>
+    /// <param name="newConnectionPointWorld">The world space position at which the search ray consting of the searchorigin and searchDirection hit the found class or Vector.zero if no class was found.</param>
+    /// <returns>The found class if there is one or null if no class was found</returns>
     private Class calculateNewConnectionToClass(Vector3 searchOrigin, Vector3 searchDirection, out Vector3 newConnectionPointWorld)
     {
         int classLayerMask = 1 << LayerMask.NameToLayer("Class");

@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Handles the visual representation of a Class. 
+/// Connectors can be attached to this class and their transforms will be updated to stick to this class then the class is being moved.
+/// </summary>
 public class Class : NetworkModelElement
 {
     public List<Connector> connectors;
@@ -14,7 +18,7 @@ public class Class : NetworkModelElement
         base.Start();
         if(IsMine())
         {
-            UpdateConnectorPositions();
+            UpdateConnectorTransforms();
         }
     }
 
@@ -23,10 +27,15 @@ public class Class : NetworkModelElement
     {
         if(isMoving)
         {
-            UpdateConnectorPositions();
+            UpdateConnectorTransforms();
         }
     }
 
+
+    /// <summary>
+    /// Adds the given connector to the list of connectors attached to this class.
+    /// </summary>
+    /// <param name="connector"></param>
     public void AddConnector(Connector connector)
     {
         connectors.Add(connector);
@@ -37,6 +46,9 @@ public class Class : NetworkModelElement
         connectors.Remove(connector);
     }
 
+    /// <summary>
+    /// Makes the class ready to be moved. Connectors attached to this class will now update their positions, scale etc. to stick to the class while moving
+    /// </summary>
     public void BeginMovement()
     {
         Debug.LogWarning("Beginning Movement");
@@ -44,12 +56,18 @@ public class Class : NetworkModelElement
         isMoving = true;
     }
 
+    /// <summary>
+    /// Signals the end of a movement, so attached connectors do not have to be updated every frame anymore
+    /// </summary>
     public void EndMovement()
     {
         isMoving = false;
     }
 
-    private void UpdateConnectorPositions()
+    /// <summary>
+    /// Updates the transforms of attached connectors to stick to this class.
+    /// </summary>
+    private void UpdateConnectorTransforms()
     {
         foreach (Connector connector in connectors)
         {
