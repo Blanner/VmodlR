@@ -15,8 +15,8 @@ GameObject:
   - component: {fileID: 457227132237430068}
   - component: {fileID: 457227132237430059}
   - component: {fileID: 457227132237430066}
-  - component: {fileID: 457227132237430065}
   - component: {fileID: 5146644948441832128}
+  - component: {fileID: 2615737797494147636}
   m_Layer: 10
   m_Name: Class
   m_TagString: Untagged
@@ -155,23 +155,6 @@ MonoBehaviour:
   m_SynchronizeAngularVelocity: 1
   m_TeleportEnabled: 1
   m_TeleportIfDistanceGreaterThan: 3
---- !u!114 &457227132237430065
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 457227132237430067}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3b97aa51b8330f544851a21b9d7b4d07, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_allowOffhandGrab: 1
-  m_snapPosition: 0
-  m_snapOrientation: 0
-  m_snapOffset: {fileID: 0}
-  m_grabPoints: []
 --- !u!114 &5146644948441832128
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -185,3 +168,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   connectors: []
+--- !u!114 &2615737797494147636
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 457227132237430067}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e7d1602b0b08654291c898fcdc7aeee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_allowOffhandGrab: 1
+  m_snapPosition: 0
+  m_snapOrientation: 0
+  m_snapOffset: {fileID: 0}
+  m_grabPoints: []

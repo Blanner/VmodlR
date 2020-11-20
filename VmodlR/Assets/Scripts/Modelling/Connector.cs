@@ -11,11 +11,11 @@ public class Connector : NetworkModelElement
     /// <summary>
     /// The class where the arrow head that belongs to this connector - if there is one - does not point. If none exists, it is irrelevant which class is the target and which the origin class
     /// </summary>
-    public Class originClass;
+    public UMLClass originClass;
     /// <summary>
     /// The class where the arrow head that belongs to this connector - if there is one - points. If none exists, it is irrelevant which class is the target and which the origin class
     /// </summary>
-    public Class targetClass;
+    public UMLClass targetClass;
     /// <summary>
     /// The arrow head that sits on the target end of this connector or null if this connector is not directed
     /// </summary>
@@ -195,13 +195,13 @@ public class Connector : NetworkModelElement
     /// </summary>
     /// <param name="newConnectionPointWorld">The world space position at which the search ray consting of the searchorigin and searchDirection hit the found class or Vector.zero if no class was found.</param>
     /// <returns>The found class if there is one or null if no class was found</returns>
-    private Class calculateNewConnectionToClass(Vector3 searchOrigin, Vector3 searchDirection, out Vector3 newConnectionPointWorld)
+    private UMLClass calculateNewConnectionToClass(Vector3 searchOrigin, Vector3 searchDirection, out Vector3 newConnectionPointWorld)
     {
         int classLayerMask = 1 << LayerMask.NameToLayer("Class");
         RaycastHit hitInfo;
         if (Physics.Raycast(new Ray(searchOrigin, searchDirection), out hitInfo, Properties.connectorAttachToClassDistance, classLayerMask))
         {
-            Class hitClass = hitInfo.transform.GetComponent<Class>();
+            UMLClass hitClass = hitInfo.transform.GetComponent<UMLClass>();
             if (hitClass != null)
             {
                 newConnectionPointWorld = hitInfo.point;

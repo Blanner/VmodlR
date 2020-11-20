@@ -7,7 +7,7 @@ using UnityEngine;
 /// It is responsible to capture the grab input of the player and telling the connector when it needs to detach/attach to a class and when it has to move based on the player grabbing and moving this volume.
 /// </summary>
 [RequireComponent(typeof(MeshRenderer), typeof(Collider))]
-public class ConnectorGrabVolume : OVRNetworkGrabbable
+public class ConnectorGrabVolume : MonoBehaviour, IGrabListener
 {
     /// <summary>
     /// The connector this Grab volume belongs to
@@ -25,9 +25,10 @@ public class ConnectorGrabVolume : OVRNetworkGrabbable
     /// </summary>
     private List<GameObject> containedHands = new List<GameObject>();
 
+    private bool isGrabbed = false;
+
     private new void Start()
     {
-        base.Start();
         meshRenderer = GetComponent<MeshRenderer>();
         meshRenderer.enabled = false;
     }
@@ -56,16 +57,16 @@ public class ConnectorGrabVolume : OVRNetworkGrabbable
         transform.position = grabVolumePosition;
     }
 
-    public override void GrabBegin(OVRGrabber hand, Collider grabPoint)
+    public void OnGrabBegin()
     {
-        base.GrabBegin(hand, grabPoint);
+        isGrabbed = true;
         connector.DetachFromClass(this);
         meshRenderer.enabled = true;
     }
 
-    public override void GrabEnd(Vector3 linearVelocity, Vector3 angularVelocity)
+    public void OnGrabEnd()
     {
-        base.GrabEnd(linearVelocity, angularVelocity);
+        isGrabbed = false;
         try
         {
             connector.AttachToClass(this);
