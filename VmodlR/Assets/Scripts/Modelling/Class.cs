@@ -6,21 +6,11 @@ using UnityEngine;
 /// Handles the visual representation of a Class. 
 /// Connectors can be attached to this class and their transforms will be updated to stick to this class then the class is being moved.
 /// </summary>
-public class Class : NetworkModelElement
+public class Class : MonoBehaviour
 {
     public List<Connector> connectors;
 
     private bool isMoving = false;
-
-    // Start is called before the first frame update
-    new void Start()
-    {
-        base.Start();
-        if(IsMine())
-        {
-            UpdateConnectorTransforms();
-        }
-    }
 
     // Update is called once per frame
     void Update()
@@ -52,7 +42,6 @@ public class Class : NetworkModelElement
     public void BeginMovement()
     {
         Debug.LogWarning("Beginning Movement");
-        RequestOwnership();
         isMoving = true;
     }
 

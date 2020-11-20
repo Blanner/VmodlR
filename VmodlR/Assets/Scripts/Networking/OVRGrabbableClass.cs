@@ -4,11 +4,11 @@ using UnityEngine;
 
 using Photon.Pun;
 
-public class OVRGrabbableClass : OVRGrabbable
+public class OVRGrabbableClass : OVRNetworkGrabbable
 {
     private Class classElement;
 
-    private new void Start()
+    protected new void Start()
     {
         base.Start();
         classElement = GetComponent<Class>();

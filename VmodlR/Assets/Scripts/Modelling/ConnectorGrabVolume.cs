@@ -7,7 +7,7 @@ using UnityEngine;
 /// It is responsible to capture the grab input of the player and telling the connector when it needs to detach/attach to a class and when it has to move based on the player grabbing and moving this volume.
 /// </summary>
 [RequireComponent(typeof(MeshRenderer), typeof(Collider))]
-public class ConnectorGrabVolume : OVRGrabbable
+public class ConnectorGrabVolume : OVRNetworkGrabbable
 {
     /// <summary>
     /// The connector this Grab volume belongs to
