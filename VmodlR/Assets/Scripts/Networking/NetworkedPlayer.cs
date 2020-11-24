@@ -14,6 +14,7 @@ using Photon.Voice.PUN;
 
 public class NetworkedPlayer : MonoBehaviourPunCallbacks
 {
+    public GameObject playerUI;
     public GameObject UIHelpersGO;
     public GameObject CameraRigGO;
     public GameObject CenterEyeGO;
@@ -30,7 +31,7 @@ public class NetworkedPlayer : MonoBehaviourPunCallbacks
         photonView = GetComponent<PhotonView>();
         photonVoice = GetComponent<PhotonVoiceView>();
 
-        //do nothing if this is the local player
+        //enable all needed components if this is the localy controlled player
         if (photonView.IsMine)
         {
 
@@ -53,6 +54,7 @@ public class NetworkedPlayer : MonoBehaviourPunCallbacks
             enableHandControl(rightHand);
 
             CameraRigGO.SetActive(true);
+            playerUI.SetActive(true);
 
             //enable player control classes
             GetComponent<CharacterController>().enabled = true;
