@@ -158,11 +158,11 @@ public class Connector : NetworkModelElement
         //move the connector to the new origin
         transform.position = newOriginPos;
         //scale the connector to the correct new length
-        transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y, newConnectorLineSegment.magnitude - arrowHeadManager.activeArrowHead.TipDistance);
+        transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y, newConnectorLineSegment.magnitude - arrowHeadManager.getTipDistance());
         //update the orintation of the connector
-        transform.rotation = Quaternion.LookRotation(newConnectorLineSegment, Vector3.up);//TODO: is Vector3.up correct here?
-        //update the position of the this connectors arrow head if it has one.
-        if(arrowHeadManager != null)
+        transform.rotation = Quaternion.LookRotation(newConnectorLineSegment, Vector3.up);
+        //update the position of this connectors arrow head if it has one.
+        if(arrowHeadManager.activeArrowHead != null)
         {
             arrowHeadManager.activeArrowHead.UpdateTransform(newTargetPos, newConnectorLineSegment);
         }

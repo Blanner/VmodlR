@@ -41,6 +41,18 @@ public class ArrowHeadSwitcher : MonoBehaviour
         }
     }
 
+    public float getTipDistance()
+    {
+        if (activeArrowHead != null)
+        {
+            return activeArrowHead.TipDistance;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
     public void changeConnectorType(ConnectorTypes connectorType)
     {
         DisableAllArrowHeads();
