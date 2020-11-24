@@ -6,6 +6,7 @@ using UnityEngine;
 /// A connecting line between two classes that possibly has an arrow tip at one end. 
 /// It sticks to the attached classes and can be moved by the playerwhen he grabs the grab volumes belonging to this connector.
 /// </summary>
+[RequireComponent(typeof(ArrowHeadSwitcher))]
 public class Connector : NetworkModelElement
 {
     /// <summary>
@@ -19,7 +20,7 @@ public class Connector : NetworkModelElement
     /// <summary>
     /// The arrow head that sits on the target end of this connector or null if this connector is not directed
     /// </summary>
-    public ArrowHead arrowHead;
+    public ArrowHeadSwitcher arrowHeadManager;
 
     public ConnectorGrabVolume originGrabVolume;
     public ConnectorGrabVolume targetGrabVolume;
@@ -40,6 +41,12 @@ public class Connector : NetworkModelElement
     new void Start()
     {
         base.Start();
+        arrowHeadManager = GetComponent<ArrowHeadSwitcher>();
+    }
+
+    public void SwitchConnectorType(ArrowHeadSwitcher.ConnectorTypes connectorType)
+    {
+        arrowHeadManager.changeConnectorType(connectorType);
     }
 
     /// <summary>
@@ -151,13 +158,13 @@ public class Connector : NetworkModelElement
         //move the connector to the new origin
         transform.position = newOriginPos;
         //scale the connector to the correct new length
-        transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y, newConnectorLineSegment.magnitude - arrowHead.TipDistance);
+        transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y, newConnectorLineSegment.magnitude - arrowHeadManager.activeArrowHead.TipDistance);
         //update the orintation of the connector
         transform.rotation = Quaternion.LookRotation(newConnectorLineSegment, Vector3.up);//TODO: is Vector3.up correct here?
         //update the position of the this connectors arrow head if it has one.
-        if(arrowHead != null)
+        if(arrowHeadManager != null)
         {
-            arrowHead.UpdateTransform(newTargetPos, newConnectorLineSegment);
+            arrowHeadManager.activeArrowHead.UpdateTransform(newTargetPos, newConnectorLineSegment);
         }
         originGrabVolume.UpdateTransform(newOriginPos);
         targetGrabVolume.UpdateTransform(newTargetPos);
