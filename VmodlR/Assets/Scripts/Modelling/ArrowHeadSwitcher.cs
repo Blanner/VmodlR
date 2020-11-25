@@ -1,27 +1,33 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
-public class ArrowHeadSwitcher : MonoBehaviour
+public enum ConnectorTypes
 {
-    public enum ConnectorTypes
-    {
-        UndirectedAssociation,
-        DirectedAssociation,
-        Inheritance,
-        Aggregation,
-        Composition
-    }
+    UndirectedAssociation,
+    DirectedAssociation,
+    Inheritance,
+    Aggregation,
+    Composition
+}
+
+public class ArrowHeadSwitcher : MonoBehaviourPun
+{
+    #region Public fields
 
     public ArrowHead associationHead;
     public ArrowHead inheritanceHead;
     public ArrowHead aggregationHead;
     public ArrowHead compositionHead;
 
-    public ArrowHead activeArrowHead { get; private set; }
+    public ArrowHead activeArrowHead;
 
-    // Start is called before the first frame update
-    void Start()
+    #endregion
+
+    #region Monobehaviour Callbacks 
+
+    void Awake()
     {
         if(associationHead == null)
         {
@@ -39,9 +45,19 @@ public class ArrowHeadSwitcher : MonoBehaviour
         {
             Debug.LogError($"Composition Head of Connector{gameObject.name} is null!");
         }
+
+        DisableAllArrowHeads();
+        if(activeArrowHead != null)
+        {
+            activeArrowHead.gameObject.SetActive(true);
+        }
     }
 
-    public float getTipDistance()
+    #endregion
+
+    #region public Methods
+
+    public float GetTipDistance()
     {
         if (activeArrowHead != null)
         {
@@ -53,12 +69,31 @@ public class ArrowHeadSwitcher : MonoBehaviour
         }
     }
 
-    public void changeConnectorType(ConnectorTypes connectorType)
+    /// <summary>
+    /// Changes the connector type of alle instances of the associated connector across the network
+    /// </summary>
+    /// <param name="connectorType"></param>
+    public void ChangeConnectorType(ConnectorTypes connectorType)
+    {
+        photonView.RPC("RemoteChangeConnectorType", RpcTarget.All, connectorType);
+    }
+
+    #endregion
+
+    #region private Methods
+
+    /// <summary>
+    /// Rpc Call that changes the connector type on this local instance of the associated connector. 
+    /// Gets called remotely via an rpc call by ChangeConnectorType so the change is synchronized across the network
+    /// </summary>
+    /// <param name="connectorType"></param>
+    [PunRPC]
+    private void RemoteChangeConnectorType(ConnectorTypes connectorType)
     {
         DisableAllArrowHeads();
 
         //set the new active arrow head
-        switch(connectorType)
+        switch (connectorType)
         {
             case ConnectorTypes.UndirectedAssociation:
                 activeArrowHead = null;
@@ -78,7 +113,7 @@ public class ArrowHeadSwitcher : MonoBehaviour
         }
 
         //enable the visual of the new connector type (if it is not an undirected association, which has no arrow head)
-        if(activeArrowHead != null)
+        if (activeArrowHead != null)
         {
             activeArrowHead.gameObject.SetActive(true);
         }
@@ -91,4 +126,6 @@ public class ArrowHeadSwitcher : MonoBehaviour
         aggregationHead.gameObject.SetActive(false);
         compositionHead.gameObject.SetActive(false);
     }
+
+    #endregion
 }

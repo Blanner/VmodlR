@@ -2,6 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum ConnectorEndType
+{
+    Origin,
+    Target
+}
+
 /// <summary>
 /// This Volume is a trigger collider that sits at one end of a connector. 
 /// It is responsible to capture the grab input of the player and telling the connector when it needs to detach/attach to a class and when it has to move based on the player grabbing and moving this volume.
@@ -14,10 +20,14 @@ public class ConnectorGrabVolume : MonoBehaviour, IGrabListener
     /// </summary>
     public Connector connector;
 
+    [Tooltip("The radius of the volume mesh, without the objects local scaling")]
+    public float baseMeshRadius = 0.5f;
+
     /// <summary>
     /// The renderer responsible for rendering the GrabVolume, when a Hand enters it.
     /// </summary>
     private MeshRenderer meshRenderer;
+
 
     /// <summary>
     /// A list that contains all player hands that the grab volume currently contains. 
@@ -27,7 +37,7 @@ public class ConnectorGrabVolume : MonoBehaviour, IGrabListener
 
     private bool isGrabbed = false;
 
-    private new void Start()
+    private void Start()
     {
         meshRenderer = GetComponent<MeshRenderer>();
         meshRenderer.enabled = false;
@@ -38,7 +48,7 @@ public class ConnectorGrabVolume : MonoBehaviour, IGrabListener
         if(isGrabbed)
         {
             //This grab volume is grabbed, so it is being moved, so we update the connectors scale and positioning to follow this grab volume
-            connector.UpdateTransformFromClassConnections();
+            connector.UpdateTransform();
         }
     }
 

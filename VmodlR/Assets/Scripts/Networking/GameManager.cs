@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     [Tooltip("The prefab to use for representing the player")]
     [SerializeField]
-    private GameObject playerPrefab;
+    private string playerPrefabName = "";
 
     #endregion
 
@@ -50,19 +50,18 @@ public class GameManager : MonoBehaviourPunCallbacks
             return;
         }
 
-        if (playerPrefab == null)
-        { // #Tip Never assume public properties of Components are filled up properly, always check and inform the developer of it.
-
+        if (playerPrefabName == "")
+        { 
             Debug.LogError("<Color=Red><b>Missing</b></Color> playerPrefab Reference. Please set it up in GameObject 'Game Manager'", this);
         }
         else
         {
             Debug.LogFormat("We are Instantiating LocalPlayer from {0}", SceneManagerHelper.ActiveSceneName);
-            Debug.LogFormat("Using Prefab {0}", playerPrefab.name);
+            Debug.LogFormat("Using Prefab {0}", playerPrefabName);
 
             // Spawn a character for the local player. it gets synced by using PhotonNetwork.Instantiate
             //Photon finds the prefab not by reference but by name. The prefab has to be located in the Assets/Resources/ directory or a subfolder of it.
-            PhotonNetwork.Instantiate(this.playerPrefab.name, new Vector3(0f, 0f, -1 * PhotonNetwork.CurrentRoom.PlayerCount), Quaternion.identity, 0);
+            PhotonNetwork.Instantiate($"Prefabs/{playerPrefabName}", new Vector3(0f, 0f, -1 * PhotonNetwork.CurrentRoom.PlayerCount), Quaternion.identity, 0);
         }
     }
 

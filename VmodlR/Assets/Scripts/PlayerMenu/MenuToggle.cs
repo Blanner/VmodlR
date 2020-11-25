@@ -26,6 +26,19 @@ public class MenuToggle : MonoBehaviour
         }
     }
 
+#if DEBUG
+
+    void Update()
+    {
+        //This is only needed for debug purposes in the editor
+        if(Input.GetKeyDown(KeyCode.M))
+        {
+            ToggleMenu();
+        }
+    }
+
+#endif
+
     public void ToggleMenu()
     {
         SetMenuActive(!targetMenu.activeSelf);

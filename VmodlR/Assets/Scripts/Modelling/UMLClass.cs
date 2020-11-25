@@ -60,7 +60,7 @@ public class UMLClass : MonoBehaviour, IGrabListener
     {
         foreach (Connector connector in connectors)
         {
-            connector.UpdateTransformFromClassConnections();
+            connector.UpdateTransform();
         }
     }
 }

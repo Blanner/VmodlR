@@ -14,7 +14,7 @@ public class NetworkModelElement : MonoBehaviour
     private PhotonView photonView;
 
     // Start is called before the first frame update
-    protected void Start()
+    protected void Awake()
     {
         photonView = GetComponent<PhotonView>();
     }

@@ -38,15 +38,14 @@ public class Connector : NetworkModelElement
 
 
     // Start is called before the first frame update
-    new void Start()
+    protected void Start()
     {
-        base.Start();
         arrowHeadManager = GetComponent<ArrowHeadSwitcher>();
     }
 
-    public void SwitchConnectorType(ArrowHeadSwitcher.ConnectorTypes connectorType)
+    public void ChangeConnectorType(ConnectorTypes connectorType)
     {
-        arrowHeadManager.changeConnectorType(connectorType);
+        arrowHeadManager.ChangeConnectorType(connectorType);
     }
 
     /// <summary>
@@ -98,7 +97,7 @@ public class Connector : NetworkModelElement
                 updateConnectionPointToOriginClass(newConnectionPointWorld);
             }
             
-            UpdateTransformFromClassConnections();
+            UpdateTransform();
         }
         else if (targetGrabVolume == connectorEndGrabVolume)
         {
@@ -111,7 +110,7 @@ public class Connector : NetworkModelElement
                 targetClass.AddConnector(this);
                 updateConnectionPointToTargetClass(newConnectionPointWorld);
             }
-            UpdateTransformFromClassConnections();
+            UpdateTransform();
         }
         else
         {
@@ -122,9 +121,10 @@ public class Connector : NetworkModelElement
 
     /// <summary>
     /// Updates the transform values of the connector and its related objects if the respective end of the connector is connected to a class.
-    /// position, rotation and scale are updated as needed for the connector line, its arrow head (if it has one) and the grab volumes (if they are not currently grabbed)
+    /// If it is not connected, it follows the position of the respective grab Volume.
+    /// Position, rotation and scale are updated as needed for the connector line, its arrow head (if it has one) and the grab volumes (if they are not currently grabbed)
     /// </summary>
-    public void UpdateTransformFromClassConnections()
+    public void UpdateTransform()
     {
         RequestOwnership();
 
@@ -158,7 +158,7 @@ public class Connector : NetworkModelElement
         //move the connector to the new origin
         transform.position = newOriginPos;
         //scale the connector to the correct new length
-        transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y, newConnectorLineSegment.magnitude - arrowHeadManager.getTipDistance());
+        transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y, newConnectorLineSegment.magnitude - arrowHeadManager.GetTipDistance());
         //update the orintation of the connector
         transform.rotation = Quaternion.LookRotation(newConnectorLineSegment, Vector3.up);
         //update the position of this connectors arrow head if it has one.

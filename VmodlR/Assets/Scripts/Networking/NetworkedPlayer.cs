@@ -24,17 +24,14 @@ public class NetworkedPlayer : MonoBehaviourPunCallbacks
     public GameObject ThirdPersonBody;
 
     private PhotonVoiceView photonVoice;
-    private PhotonView photonView;
 
     void Awake()
     {
-        photonView = GetComponent<PhotonView>();
         photonVoice = GetComponent<PhotonVoiceView>();
 
         //enable all needed components if this is the localy controlled player
         if (photonView.IsMine)
         {
-
             CameraRigGO.GetComponent<OVRCameraRig>().enabled = true;
             CameraRigGO.GetComponent<OVRCameraRig>().disableEyeAnchorCameras = false;
             CameraRigGO.GetComponent<UnityEngine.EventSystems.OVRPhysicsRaycaster>().enabled = true;
@@ -64,23 +61,37 @@ public class NetworkedPlayer : MonoBehaviourPunCallbacks
             GetComponent<CharacterControllerCameraConstraint>().enabled = true;
 
             ThirdPersonBody.SetActive(false);
-
-
-            return;
         }
-        //if it is a remote player, remove the OVRManager as it may only exist exactly once in a scene
-        DestroyImmediate(CameraRigGO.GetComponent<OVRManager>());
-        CameraRigGO.SetActive(true);
-        ThirdPersonBody.SetActive(true);
-        this.enabled = false;
-
-    }
-
-    private void Update()
-    {
-        if(photonView.IsMine)
+        else
         {
-            //Debug.Log($"Photon Voice: ViewReady: {photonVoice.IsPhotonViewReady}, Setup: {photonVoice.IsSetup}, Recorder: {photonVoice.IsRecorder}, Recording: {photonVoice.IsRecording}, IsSpeaker: {photonVoice.IsSpeaker}, Linked: {photonVoice.IsSpeakerLinked}, Speaking: {photonVoice.IsSpeaking}");
+            //if it is a remote player, remove the OVRManager as it may only exist exactly once in a scene
+            DestroyImmediate(CameraRigGO.GetComponent<OVRManager>());
+
+            CameraRigGO.GetComponent<OVRCameraRig>().enabled = false;
+            CameraRigGO.GetComponent<UnityEngine.EventSystems.OVRPhysicsRaycaster>().enabled = false;
+            CenterEyeGO.GetComponent<Camera>().enabled = false;
+            CenterEyeGO.GetComponent<OVRScreenFade>().enabled = false;
+
+            //disable UI interaction for local players
+            UIHelpersGO.SetActive(false);
+
+            //disble camera rig classes
+            CameraRigGO.GetComponent<OVRHeadsetEmulator>().enabled = false;
+
+            playerUI.SetActive(false);
+
+            //disable player control classes
+            GetComponent<CharacterController>().enabled = false;
+            GetComponent<OVRPlayerController>().enabled = false;
+            GetComponent<OVRSceneSampleController>().enabled = false;
+            GetComponent<OVRDebugInfo>().enabled = false;
+            GetComponent<CharacterControllerCameraConstraint>().enabled = false;
+
+            //enable the camera rig so the local player can still see the remote player's hands & body
+            CameraRigGO.SetActive(true);
+            ThirdPersonBody.SetActive(true);
+
+            this.enabled = false;
         }
     }
 
