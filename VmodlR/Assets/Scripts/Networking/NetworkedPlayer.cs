@@ -32,6 +32,8 @@ public class NetworkedPlayer : MonoBehaviourPunCallbacks
         //enable all needed components if this is the localy controlled player
         if (photonView.IsMine)
         {
+            this.tag = TagUtils.localPlayerTag;
+
             CameraRigGO.GetComponent<OVRCameraRig>().enabled = true;
             CameraRigGO.GetComponent<OVRCameraRig>().disableEyeAnchorCameras = false;
             CameraRigGO.GetComponent<UnityEngine.EventSystems.OVRPhysicsRaycaster>().enabled = true;

@@ -1,5 +1,8 @@
 ﻿namespace Photon.Voice.Unity.Demos
 {
+    //disable warnings for private (serialized) fields not being assigned to
+    #pragma warning disable 649
+
     using UnityEngine.UI;
     using UnityEngine;
 

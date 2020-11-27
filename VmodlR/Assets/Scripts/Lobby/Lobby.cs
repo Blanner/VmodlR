@@ -17,12 +17,18 @@ using UnityEngine.UI;
 using Photon.Realtime;
 using Photon.Pun;
 
+
+
 public class Lobby : MonoBehaviourPunCallbacks
 {
+    //disable warnings for private (serialized) fields not being assigned to
+    #pragma warning disable 649
+
     #region Private Serializable Fields
 
     [Tooltip("The Ui Panel to let the user enter name, connect and play")]
     [SerializeField]
+    
     private GameObject controlPanel;
 
     [Tooltip("The Ui Text to inform the user about the connection progress")]
