@@ -20,7 +20,6 @@ public class OVRNetworkGrabbable : OVRGrabbable
 
     public override void GrabBegin(OVRGrabber hand, Collider grabPoint)
     {
-        //Debug.Log($"NetworkGrabbable {this.gameObject.name} beginning grab: Calling Request Ownership.");
         photonView.RequestOwnership();
         base.GrabBegin(hand, grabPoint);
         grabListener.OnGrabBegin();

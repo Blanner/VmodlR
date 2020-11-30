@@ -69,6 +69,8 @@ public class ConnectorGrabVolume : MonoBehaviour, IGrabListener
 
     public void OnGrabBegin()
     {
+        Debug.Log($"\nOnGrab Begin on {gameObject.name}");
+
         isGrabbed = true;
         connector.DetachFromClass(this);
         meshRenderer.enabled = true;
@@ -77,15 +79,10 @@ public class ConnectorGrabVolume : MonoBehaviour, IGrabListener
     public void OnGrabEnd()
     {
         isGrabbed = false;
-        try
-        {
-            connector.AttachToClass(this);
-        }
-        catch(Exception e)
-        {
-            Debug.Log($"\nCaucht exception: {e.Message}\nat:\n{e.StackTrace}");
-            Application.Quit();
-        }
+
+        //update this local connectors attach state and transform, the transform gets synchronized via PhotonViews
+        connector.CalculateNewAttachement(this);
+
         containedHands.Clear();
         meshRenderer.enabled = false;
     }

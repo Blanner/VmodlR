@@ -2,15 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using Photon.Pun;
+
 /// <summary>
 /// Handles the visual representation of a Class. 
 /// Connectors can be attached to this class and their transforms will be updated to stick to this class then the class is being moved.
 /// </summary>
-public class UMLClass : MonoBehaviour, IGrabListener
+public class UMLClass : MonoBehaviourPun, IGrabListener
 {
     public List<Connector> connectors;
 
     private bool isMoving = false;
+
+    #region MonoBehaviour Callbacks
 
     // Update is called once per frame
     void Update()
@@ -20,6 +24,8 @@ public class UMLClass : MonoBehaviour, IGrabListener
             UpdateConnectorTransforms();
         }
     }
+
+    #endregion
 
 
     /// <summary>

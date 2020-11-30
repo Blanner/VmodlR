@@ -321,6 +321,7 @@ GameObject:
   - component: {fileID: 7332939018477406824}
   - component: {fileID: 7332939018477406830}
   - component: {fileID: 7332939018477406829}
+  - component: {fileID: 6451606228769668939}
   m_Layer: 0
   m_Name: TargetGrabVolume
   m_TagString: Untagged
@@ -471,6 +472,7 @@ MonoBehaviour:
   OwnershipTransfer: 1
   ObservedComponents:
   - {fileID: 7332939018477406829}
+  - {fileID: 6451606228769668939}
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -490,6 +492,21 @@ MonoBehaviour:
   m_SynchronizeAngularVelocity: 1
   m_TeleportEnabled: 1
   m_TeleportIfDistanceGreaterThan: 3
+--- !u!114 &6451606228769668939
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7332939018477406838}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 1
 --- !u!1 &7332939018566597777
 GameObject:
   m_ObjectHideFlags: 0
@@ -1130,6 +1147,7 @@ GameObject:
   - component: {fileID: 7332939019918461149}
   - component: {fileID: 7332939019918461139}
   - component: {fileID: 7332939019918461138}
+  - component: {fileID: 546264810820392302}
   m_Layer: 0
   m_Name: OriginGrabVolume
   m_TagString: Untagged
@@ -1280,6 +1298,7 @@ MonoBehaviour:
   OwnershipTransfer: 1
   ObservedComponents:
   - {fileID: 7332939019918461138}
+  - {fileID: 546264810820392302}
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -1299,6 +1318,21 @@ MonoBehaviour:
   m_SynchronizeAngularVelocity: 1
   m_TeleportEnabled: 1
   m_TeleportIfDistanceGreaterThan: 3
+--- !u!114 &546264810820392302
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7332939019918461147}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 1
 --- !u!1 &7332939020257378324
 GameObject:
   m_ObjectHideFlags: 0

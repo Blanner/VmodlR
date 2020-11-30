@@ -523,6 +523,7 @@ GameObject:
   - component: {fileID: 6096090605977930023}
   - component: {fileID: 6096090605977930025}
   - component: {fileID: 6096090605977930024}
+  - component: {fileID: 6577267057753577280}
   m_Layer: 0
   m_Name: OriginGrabVolume
   m_TagString: Untagged
@@ -673,6 +674,7 @@ MonoBehaviour:
   OwnershipTransfer: 1
   ObservedComponents:
   - {fileID: 6096090605977930024}
+  - {fileID: 6577267057753577280}
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -692,6 +694,21 @@ MonoBehaviour:
   m_SynchronizeAngularVelocity: 1
   m_TeleportEnabled: 1
   m_TeleportIfDistanceGreaterThan: 3
+--- !u!114 &6577267057753577280
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6096090605977930017}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 1
 --- !u!1 &6096090606117093870
 GameObject:
   m_ObjectHideFlags: 0
@@ -1136,6 +1153,7 @@ GameObject:
   - component: {fileID: 6096090607418919826}
   - component: {fileID: 6096090607418919828}
   - component: {fileID: 6096090607418919831}
+  - component: {fileID: 1284299035274423672}
   m_Layer: 0
   m_Name: TargetGrabVolume
   m_TagString: Untagged
@@ -1305,6 +1323,21 @@ MonoBehaviour:
   m_SynchronizeAngularVelocity: 1
   m_TeleportEnabled: 1
   m_TeleportIfDistanceGreaterThan: 3
+--- !u!114 &1284299035274423672
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6096090607418919820}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 1
 --- !u!1 &6096090607796296748
 GameObject:
   m_ObjectHideFlags: 0

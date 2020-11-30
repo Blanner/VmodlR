@@ -10,7 +10,7 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class SideMirror : MonoBehaviourPun, IOnEventCallback
 {
-    public const byte synchronizeClassEventCode = 1;
+    
 
     public List<ClassSide> sides;
 
@@ -42,19 +42,19 @@ public class SideMirror : MonoBehaviourPun, IOnEventCallback
 
         //delete the last change event from the room's event cache by filtering by its content
         RaiseEventOptions deleteEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All, CachingOption = EventCaching.RemoveFromRoomCache };
-        if(!PhotonNetwork.RaiseEvent(synchronizeClassEventCode, oldContent, deleteEventOptions, SendOptions.SendReliable))
+        if(!PhotonNetwork.RaiseEvent(EventCodes.synchronizeClass, oldContent, deleteEventOptions, SendOptions.SendReliable))
         {
             Debug.LogError("Event was not deleted!");
         }
 
-        //recreate the content of the last change event received
+        //create the new content for the new event
         Hashtable newConent = new Hashtable();
         newConent.Add("PhotonViewID", photonView.ViewID);
         newConent.Add("NewClassName", newName);
 
         //raise the new change event, that replaces the one we just deleted
         RaiseEventOptions createEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All, CachingOption = EventCaching.AddToRoomCacheGlobal };
-        PhotonNetwork.RaiseEvent(synchronizeClassEventCode, newConent, createEventOptions, SendOptions.SendReliable);
+        PhotonNetwork.RaiseEvent(EventCodes.synchronizeClass, newConent, createEventOptions, SendOptions.SendReliable);
     }
 
     private void localChangeName(string newName)
@@ -69,7 +69,7 @@ public class SideMirror : MonoBehaviourPun, IOnEventCallback
     public void OnEvent(EventData photonEvent)
     {
         //Check if the event is a synchronization event for a class
-        if(photonEvent.Code == synchronizeClassEventCode)
+        if(photonEvent.Code == EventCodes.synchronizeClass)
         {
             //extract the sent data from the event
             Hashtable eventData = (Hashtable)photonEvent.CustomData;

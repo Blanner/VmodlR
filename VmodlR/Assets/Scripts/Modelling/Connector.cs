@@ -2,13 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using Photon.Pun;
+using Photon.Realtime;
+using ExitGames.Client.Photon;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
+
 /// <summary>
 /// A connecting line between two classes that possibly has an arrow tip at one end. 
 /// It sticks to the attached classes and can be moved by the playerwhen he grabs the grab volumes belonging to this connector.
 /// </summary>
 [RequireComponent(typeof(ArrowHeadSwitcher))]
-public class Connector : NetworkModelElement
+public class Connector : MonoBehaviourPun, IOnEventCallback
 {
+    #region public fields
+
     /// <summary>
     /// The class where the arrow head that belongs to this connector - if there is one - does not point. If none exists, it is irrelevant which class is the target and which the origin class
     /// </summary>
@@ -25,23 +32,42 @@ public class Connector : NetworkModelElement
     public ConnectorGrabVolume originGrabVolume;
     public ConnectorGrabVolume targetGrabVolume;
 
-    private Vector3 ConnectorMidPosition { get { return transform.GetChild(0).position; } }
+    #endregion
+
+    #region private fields
 
     /// <summary>
     /// The position relative to the origin class where the origin end of the connection should sit
     /// </summary>
-    private Vector3 originLocalPosition;
+    private Vector3 localOriginConnectionPoint;
     /// <summary>
     /// THe position relative to the target class where the target end of the connection should sit
     /// </summary>
-    private Vector3 targetLocalPosition;
+    private Vector3 localTargetConnectionPoint;
 
+    #endregion
+
+    #region Monobehaviour Callbacks
 
     // Start is called before the first frame update
     protected void Start()
     {
         arrowHeadManager = GetComponent<ArrowHeadSwitcher>();
     }
+
+    private void OnEnable()
+    {
+        PhotonNetwork.AddCallbackTarget(this);
+    }
+
+    private void OnDisable()
+    {
+        PhotonNetwork.RemoveCallbackTarget(this);
+    }
+
+    #endregion
+
+    #region Public Methods
 
     public void ChangeConnectorType(ConnectorTypes connectorType)
     {
@@ -79,8 +105,9 @@ public class Connector : NetworkModelElement
     /// <summary>
     /// Tries to attach the end of the connector that the given ConnectorGrabVolume corresponds to to a class that this end of the connector currently points at. 
     /// If there is no class in that direction the connectors end stays loose.
+    /// This updates the Transform of the connector, only call on the client that currently owns the connector
     /// </summary>
-    public void AttachToClass(ConnectorGrabVolume connectorEndGrabVolume)
+    public void CalculateNewAttachement(ConnectorGrabVolume connectorEndGrabVolume)
     {
         Vector3 attachSearchOrigin = connectorEndGrabVolume.transform.position;
         Vector3 attachSearchDirection;
@@ -89,27 +116,14 @@ public class Connector : NetworkModelElement
         {
             attachSearchDirection = transform.forward * -1.0f;
             //check if we can attach to a class
-            Vector3 newConnectionPointWorld;
-            originClass = calculateNewConnectionToClass(attachSearchOrigin, attachSearchDirection, out newConnectionPointWorld);
-            if(originClass != null)
-            {
-                originClass.AddConnector(this);
-                updateConnectionPointToOriginClass(newConnectionPointWorld);
-            }
-            
+            UpdateAttachState(ConnectorEndType.Origin, attachSearchOrigin, attachSearchDirection);
             UpdateTransform();
         }
         else if (targetGrabVolume == connectorEndGrabVolume)
         {
             attachSearchDirection = transform.forward;
             //check if we can attach to a class
-            Vector3 newConnectionPointWorld;
-            targetClass = calculateNewConnectionToClass(attachSearchOrigin, attachSearchDirection, out newConnectionPointWorld);
-            if (targetClass != null)
-            {
-                targetClass.AddConnector(this);
-                updateConnectionPointToTargetClass(newConnectionPointWorld);
-            }
+            UpdateAttachState(ConnectorEndType.Target, attachSearchOrigin, attachSearchDirection);
             UpdateTransform();
         }
         else
@@ -120,13 +134,63 @@ public class Connector : NetworkModelElement
     }
 
     /// <summary>
+    /// Callback triggered by attach events on a grab volume. 
+    /// This updates the local attach states without affecting the transform, since the transform is already synchronized via PhotonViews
+    /// </summary>
+    /// <param name="connectorEndGrabVolume"></param>
+    public void OnOwnerAttachedToClass(ConnectorGrabVolume connectorEndGrabVolume)
+    {
+        Vector3 attachSearchOrigin = connectorEndGrabVolume.transform.position;
+        Vector3 attachSearchDirection;
+
+        if (originGrabVolume == connectorEndGrabVolume)
+        {
+            attachSearchDirection = transform.forward * -1.0f;
+            //check if we can attach to a class
+            UpdateAttachState(ConnectorEndType.Origin, attachSearchOrigin, attachSearchDirection);
+        }
+        else if (targetGrabVolume == connectorEndGrabVolume)
+        {
+            attachSearchDirection = transform.forward;
+            //check if we can attach to a class
+            UpdateAttachState(ConnectorEndType.Target, attachSearchOrigin, attachSearchDirection);
+        }
+        else
+        {
+            Debug.LogError("Called attachFromClass() with a grab volume not belonging to this connector.");
+            return;
+        }
+    }
+
+    /// <summary>
+    /// Tries to update the attach state of this connector at the given end to a class that this end of the connector currently points at. 
+    /// If there is no class in that direction the connectors end stays loose or gets detatched from its current class.
+    /// The attach state is the synchronized across all clients via a raised event
+    /// This does not update the Transform of the connector, only the attach states.
+    /// </summary>
+    public void UpdateAttachState(ConnectorEndType connectorEnd, Vector3 attachSearchOrigin, Vector3 attachSearchDirection)
+    {
+        Vector3 oldLocalConnectionPointToClass = (connectorEnd == ConnectorEndType.Origin) ? localOriginConnectionPoint : localTargetConnectionPoint;
+
+        UMLClass oldAttachedClass = (connectorEnd == ConnectorEndType.Origin) ? originClass : targetClass;
+        UMLClass newAttachedClass = calculateNewConnectionToClass(attachSearchOrigin, attachSearchDirection, out Vector3 newConnectionPointWorld);
+
+        if (newAttachedClass != null)
+        {
+            AttachToClass(newAttachedClass, connectorEnd);
+            UpdateConnectionPointToClass(newConnectionPointWorld, connectorEnd);
+        }
+
+        RemoteUpdateAttachState(connectorEnd, oldAttachedClass, newAttachedClass, oldLocalConnectionPointToClass);
+    }
+    /// <summary>
     /// Updates the transform values of the connector and its related objects if the respective end of the connector is connected to a class.
     /// If it is not connected, it follows the position of the respective grab Volume.
     /// Position, rotation and scale are updated as needed for the connector line, its arrow head (if it has one) and the grab volumes (if they are not currently grabbed)
     /// </summary>
     public void UpdateTransform()
     {
-        RequestOwnership();
+        photonView.RequestOwnership();
 
         Vector3 newOriginPos;
         Vector3 newTargetPos;
@@ -136,7 +200,7 @@ public class Connector : NetworkModelElement
         //This is done by transforming the target/origin positions local to the respective class back to global positions based on the new transform values of the classes
         if (originClass != null)
         {
-            newOriginPos = originClass.transform.TransformPoint(originLocalPosition);
+            newOriginPos = originClass.transform.TransformPoint(localOriginConnectionPoint);
         }
         else
         {
@@ -145,7 +209,7 @@ public class Connector : NetworkModelElement
 
         if (targetClass != null)
         {
-            newTargetPos = targetClass.transform.TransformPoint(targetLocalPosition);
+            newTargetPos = targetClass.transform.TransformPoint(localTargetConnectionPoint);
         }
         else
         {
@@ -171,28 +235,31 @@ public class Connector : NetworkModelElement
     }
 
 
-    /// <summary>
-    /// Resets the attaching position (local to the attached class) of the connectors target end to the given world position
-    /// If the target end is currently not attached to a class nothing happens.
-    /// </summary>
-    /// <param name="connectionPointWorldPos"></param>
-    private void updateConnectionPointToTargetClass(Vector3 connectionPointWorldPos)
-    {
-        if(targetClass != null)
-        {
-            targetLocalPosition = targetClass.transform.InverseTransformPoint(connectionPointWorldPos);
-        }
-    }
+
+    #endregion
+
+    #region private Methods
 
     /// <summary>
-    /// Resets the attaching position (local to the attached class) of the connectors origin end to the given world position
+    /// Resets the attaching position (local to the attached class) of the connectors given end to the given world position
     /// If the origin end is currently not attached to a class nothing happens.
     /// </summary>
-    private void updateConnectionPointToOriginClass(Vector3 connectionPointWorldPos)
+    private void UpdateConnectionPointToClass(Vector3 connectionPointWorldPos, ConnectorEndType connectorEnd)
     {
-        if (originClass != null)
+        switch(connectorEnd)
         {
-            originLocalPosition = originClass.transform.InverseTransformPoint(connectionPointWorldPos);
+            case ConnectorEndType.Origin:
+                if (originClass != null)
+                {
+                    localOriginConnectionPoint = originClass.transform.InverseTransformPoint(connectionPointWorldPos);
+                }
+                break;
+            case ConnectorEndType.Target:
+                if (targetClass != null)
+                {
+                    localTargetConnectionPoint = targetClass.transform.InverseTransformPoint(connectionPointWorldPos);
+                }
+                break;
         }
     }
 
@@ -208,6 +275,7 @@ public class Connector : NetworkModelElement
         RaycastHit hitInfo;
         if (Physics.Raycast(new Ray(searchOrigin, searchDirection), out hitInfo, Properties.connectorAttachToClassDistance, classLayerMask))
         {
+            Debug.Log($"Raycast hit {hitInfo.transform.name}");
             UMLClass hitClass = hitInfo.transform.GetComponent<UMLClass>();
             if (hitClass != null)
             {
@@ -220,4 +288,157 @@ public class Connector : NetworkModelElement
         newConnectionPointWorld = Vector3.zero;
         return null;
     }
+
+    private void AttachToClass(UMLClass attachClass, ConnectorEndType connectorEndType)
+    {
+        //In case this end is still attached to another class, we first detach it
+        DetachFromClass(connectorEndType);
+
+        switch(connectorEndType)
+        {
+            case ConnectorEndType.Origin:
+                attachClass.AddConnector(this);
+                originClass = attachClass;
+                break;
+            case ConnectorEndType.Target:
+                attachClass.AddConnector(this);
+                targetClass = attachClass;
+                break;
+        }
+    }
+
+    private void DetachFromClass(ConnectorEndType connectorEndType)
+    {
+        switch (connectorEndType)
+        {
+            case ConnectorEndType.Origin:
+                if(originClass != null)
+                {
+                    originClass.RemoveConnector(this);
+                    originClass = null;
+                }
+                break;
+            case ConnectorEndType.Target:
+                if(targetClass != null)
+                {
+                    targetClass.RemoveConnector(this);
+                    targetClass = null;
+                }
+                break;
+        }
+    }
+
+    #endregion
+
+    #region Network Implementation
+
+
+
+    /// <summary>
+    /// Updates the attach state on all other instances of this connector and the respective classes across the network by raising an event and deleting the event it replaces.
+    /// </summary>
+    /// <param name="connectorEndType">Wether to update the attach state to the target or origin class</param>
+    /// <param name="previousAttachedClass">the class that was attached to the connector end before the change</param>
+    /// <param name="newAttachedClass">the class that is now (after the change) attached to the connector end</param>
+    /// <param name="oldLocalConnectionPoint">the local connection point the connector end had to the <paramref name="previousAttachedClass"/></param>
+    public void RemoteUpdateAttachState(ConnectorEndType connectorEndType, UMLClass previousAttachedClass, UMLClass newAttachedClass, Vector3 oldLocalConnectionPoint)
+    {
+        Debug.Log($"\nUpdating Attach State on {gameObject.name}");
+
+        byte eventCode = (connectorEndType == ConnectorEndType.Target) ? EventCodes.updateTargetEndAttachState : EventCodes.updateOriginEndAttachState;
+        Vector3 newLocalConnectionPos = (connectorEndType == ConnectorEndType.Target) ? localTargetConnectionPoint : localOriginConnectionPoint;
+
+        //recreate the content of the last attach event
+        Hashtable oldContent = new Hashtable();
+        oldContent.Add("ConnectorViewID", this.photonView.ViewID);
+        oldContent.Add("ClassViewID", (previousAttachedClass == null) ? -1 : previousAttachedClass.photonView.ViewID);
+        oldContent.Add("LocalConnectionPos", oldLocalConnectionPoint); 
+        //Delete the preceding attach event that will be overwriten by a new one afterwards, this is necessary so the rooms event cache does not fill up
+        //delete the last change event from the room's event cache by filtering by its content
+        RaiseEventOptions deleteEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.Others, CachingOption = EventCaching.RemoveFromRoomCache };
+        if (!PhotonNetwork.RaiseEvent(eventCode, oldContent, deleteEventOptions, SendOptions.SendReliable))
+        {
+            Debug.LogError("Event was not deleted!");
+        }
+
+        //create the new content for the new event
+        Hashtable newContent = new Hashtable();
+        newContent.Add("ConnectorViewID", photonView.ViewID);
+        newContent.Add("ClassViewID", (newAttachedClass == null) ? -1 : newAttachedClass.photonView.ViewID);
+        newContent.Add("LocalConnectionPos", newLocalConnectionPos);
+
+        Debug.Log($"\nRaising Event on {gameObject.name}");
+
+        //Raise an Attach Event so all instances of this grab volume on other clients can instruct their connector to update his attach state
+        RaiseEventOptions createEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.Others, CachingOption = EventCaching.AddToRoomCacheGlobal };
+        if (!PhotonNetwork.RaiseEvent(eventCode, newContent, createEventOptions, SendOptions.SendReliable))
+        {
+            Debug.LogError("\nCould not raise event");
+        }
+
+        Debug.Log($"\nRaised Event on {gameObject.name}");
+    }
+
+    public void OnEvent(EventData photonEvent)
+    {
+        if (EventCodes.IsUpdateOriginAttachmentEvent(photonEvent.Code) || EventCodes.IsUpdateTargetAttachmentEvent(photonEvent.Code))
+        {
+            Debug.Log($"\n update target end attach state of Connector Event on {this.gameObject.name}");
+            //extract the sent data from the event
+            Hashtable eventData = (Hashtable)photonEvent.CustomData;
+            int connectorViewID = (int)eventData["ConnectorViewID"];
+            if (connectorViewID == photonView.ViewID)
+            {
+                Debug.Log($"\nEvent triggers attaching to class on {this.gameObject.name}");
+                //Attach/detatch
+                int classViewID = (int)eventData["ClassViewID"];
+                Vector3 localConnectionPos = (Vector3)eventData["LocalConnectionPos"];
+
+                if(classViewID == -1)//Detaching
+                {
+                    if (EventCodes.IsUpdateOriginAttachmentEvent(photonEvent.Code))
+                    {
+                        DetachFromClass(ConnectorEndType.Origin);
+                        localOriginConnectionPoint = localConnectionPos;
+                    }
+                    else //EventCodes.IsUpdateTargetAttachmentEvent(photonEvent.Code) is true
+                    {
+                        DetachFromClass(ConnectorEndType.Target);
+                        localTargetConnectionPoint = localConnectionPos;
+                    }
+                }
+                else//Attaching
+                {
+                    PhotonView classView = PhotonView.Find(classViewID);
+                    if (classView == null)
+                    {
+                        Debug.LogError($"Photon View with ID {classViewID} not found!");
+                        return;
+                    }
+
+                    UMLClass attachClass = classView.transform.GetComponent<UMLClass>();
+                    if (attachClass == null)
+                    {
+                        Debug.LogError($"UMLClass instance not found on PhotonView {classViewID}");
+                        return;
+                    }
+
+                    if (EventCodes.IsUpdateOriginAttachmentEvent(photonEvent.Code))
+                    {
+                        AttachToClass(attachClass, ConnectorEndType.Origin);
+                        localOriginConnectionPoint = localConnectionPos;
+                    }
+                    else //EventCodes.IsUpdateTargetAttachmentEvent(photonEvent.Code) is true
+                    {
+                        AttachToClass(attachClass, ConnectorEndType.Target);
+                        localTargetConnectionPoint = localConnectionPos;
+                    }
+                    
+                }
+            }
+        }
+     
+    }
+
+    #endregion
 }
