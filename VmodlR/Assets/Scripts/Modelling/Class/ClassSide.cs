@@ -1,36 +1,51 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(Canvas), typeof(OVRRaycaster))]
 public class ClassSide : MonoBehaviour
 {
-    public string cameraGOName = "CenterEyeAnchor";
-    public string UIHelperGOName = "UIHelpers";
+    public ClassElementGroup fields;
+    public ClassElementGroup operations;
 
-    public SideMirror mirror;
-
-    public InputField className;
-
-    // Start is called before the first frame update
-    void Start()
+    public void LocalChangeElement(ClassElementType elementType, int elementID, string newValue)
     {
-        GameObject player = GameObject.FindGameObjectWithTag(TagUtils.localPlayerTag);
-        Transform camera = player.transform.FindChildRecursive(cameraGOName);
-        GetComponent<Canvas>().worldCamera = camera.GetComponent<Camera>();
-
-        GetComponent<OVRRaycaster>().pointer = player.transform.FindChildRecursive(UIHelperGOName).gameObject;
+        switch(elementType)
+        {
+            case ClassElementType.Field:
+                fields.LocalChangeValue(elementID, newValue);
+                break;
+            case ClassElementType.Operation:
+                operations.LocalChangeValue(elementID, newValue);
+                break;
+        }
+        
     }
 
-    public void OnChangedName(string newName)
+    public void LocalCreateElement(ClassContentSynchronizer masterSynchronizer, ClassSideMirror sideMirror, ClassElementType elementType, int elementID, int elementIndex)
     {
-        mirror.OnChangedName(newName);
+        switch (elementType)
+        {
+            case ClassElementType.Field:
+                fields.LocalCreateElement(masterSynchronizer, sideMirror, elementType, elementID, elementIndex);
+                break;
+            case ClassElementType.Operation:
+                operations.LocalCreateElement(masterSynchronizer, sideMirror, elementType, elementID, elementIndex);
+                break;
+        }
     }
 
-    public void ChangeName(string newName)
+    public void LocalDeleteElement(ClassElementType elementType, int elementID)
     {
-        className.SetTextWithoutNotify(newName);
+        switch (elementType)
+        {
+            case ClassElementType.Field:
+                fields.LocalDeleteElement(elementID);
+                break;
+            case ClassElementType.Operation:
+                operations.LocalDeleteElement(elementID);
+                break;
+        }
     }
+
 }
