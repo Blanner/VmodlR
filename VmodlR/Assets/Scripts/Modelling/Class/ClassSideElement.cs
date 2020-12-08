@@ -23,13 +23,25 @@ public class ClassSideElement : MonoBehaviour//Pun
 
     public ClassElementType ElementType { get; private set; }
 
-    public void Initialize(ClassElementType elementType, int elementID, int elementIndex, ClassElementSynchronizer elementSynchronizer, ClassContentSynchronizer masterSynchronizer)
+    public void Awake()
+    {
+        if(elementInputField == null)
+        {
+            Debug.LogError($"Input Field for Class Side Element is null on {gameObject.name}!");
+        }
+    }
+
+    public void Initialize(ClassElementType elementType, int elementID, ClassElementSynchronizer elementSynchronizer, ClassContentSynchronizer masterSynchronizer)
     {
         this.ElementType = elementType;
         this.ElementID = elementID;
-        //this.ElementIndex = elementIndex;
         this.elementSynchronizer = elementSynchronizer;
         this.masterSynchronizer = masterSynchronizer;
+    }
+
+    public void RemoteAddElementBelow()
+    {
+        masterSynchronizer.AddElementBelow(ElementID, ElementType);
     }
 
     /// <summary>

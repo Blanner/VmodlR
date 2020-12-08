@@ -19,7 +19,7 @@ public class ClassElementSynchronizer : MonoBehaviour, IOnEventCallback
 
     private string elementValue;
 
-    private void Initialize(ClassSideMirror classSideMirror, ClassSideElement syncElement)
+    public void Initialize(ClassSideMirror classSideMirror, ClassSideElement syncElement)
     {
         this.classSideMirror = classSideMirror;
         this.syncElement = syncElement;
@@ -42,12 +42,6 @@ public class ClassElementSynchronizer : MonoBehaviour, IOnEventCallback
     private void OnDisable()
     {
         PhotonNetwork.RemoveCallbackTarget(this);
-    }
-
-    public void Initialize(ClassSideMirror classSideMirror, string elementValue)
-    {
-        this.classSideMirror = classSideMirror;
-        this.elementValue = elementValue;
     }
 
     public void RemoteChangeValue(string newValue)

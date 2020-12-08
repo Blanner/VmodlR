@@ -22,13 +22,13 @@ public class ClassElementGroup : MonoBehaviour
     {
         //Instantiate the element at the correct position under its container
         GameObject classElementGO = Instantiate(classElementPrefab, elementContainer);
-        classElementGO.transform.SetSiblingIndex(elementIndex);
+        classElementGO.transform.SetSiblingIndex(elementIndex + 1);//index 0 is always ocupied by the insert element panel, thus the index in the model (elementIndex) is always 1 smaller than the index in the siblings list
 
         //Initialize the classElement & its synchronizer
         ClassSideElement classElement = classElementGO.GetComponent<ClassSideElement>();
         ClassElementSynchronizer elementSynchronizer = classElementGO.GetComponent<ClassElementSynchronizer>();
-        classElement.Initialize(elementType, elementID, elementIndex, elementSynchronizer, masterSynchronizer);
-        elementSynchronizer.Initialize(sideMirror, classElement.GetComponent<UnityEngine.UI.InputField>().text);
+        classElement.Initialize(elementType, elementID, elementSynchronizer, masterSynchronizer);
+        elementSynchronizer.Initialize(sideMirror, classElement);
     }
 
     public void LocalDeleteElement(int elementID)

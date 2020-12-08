@@ -58,7 +58,6 @@ public class NetworkedPlayer : MonoBehaviourPunCallbacks
             //enable player control classes
             GetComponent<CharacterController>().enabled = true;
             GetComponent<OVRPlayerController>().enabled = true;
-            GetComponent<OVRSceneSampleController>().enabled = true;
             GetComponent<OVRDebugInfo>().enabled = true;
             GetComponent<CharacterControllerCameraConstraint>().enabled = true;
 
@@ -85,7 +84,6 @@ public class NetworkedPlayer : MonoBehaviourPunCallbacks
             //disable player control classes
             GetComponent<CharacterController>().enabled = false;
             GetComponent<OVRPlayerController>().enabled = false;
-            GetComponent<OVRSceneSampleController>().enabled = false;
             GetComponent<OVRDebugInfo>().enabled = false;
             GetComponent<CharacterControllerCameraConstraint>().enabled = false;
 
