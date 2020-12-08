@@ -53,6 +53,20 @@ public class ClassSide : MonoBehaviour
         UpdateElementLayout();
     }
 
+    public void LocalMoveElement(ClassElementType elementType, int elementID, int newIndex)
+    {
+        switch (elementType)
+        {
+            case ClassElementType.Field:
+                fields.LocalMoveElement(elementID, newIndex);
+                break;
+            case ClassElementType.Operation:
+                operations.LocalMoveElement(elementID, newIndex);
+                break;
+        }
+        UpdateElementLayout();
+    }
+
     public void LocalDeleteElement(ClassElementType elementType, int elementID)
     {
         switch (elementType)

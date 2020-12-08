@@ -129,17 +129,17 @@ public class ClassContentSynchronizer : MonoBehaviourPunCallbacks, IOnEventCallb
         PhotonNetwork.CurrentRoom.SetCustomProperties(updatedProperty, expectedProperty);
     }
 
-    public void DeleteElement(ClassElementType elementType, int viewID)
+    public void DeleteElement(ClassElementType elementType, int elementID)
     {
         int[] updatedModel;
         switch (elementType)
         {
             case ClassElementType.Field:
-                updatedModel = CalculateModelForRemovedElement(fieldsModel, viewID);
+                updatedModel = CalculateModelForRemovedElement(fieldsModel, elementID);
                 RaiseUpdateClassContentEvent(elementType, updatedModel, fieldsModel);
                 break;
             case ClassElementType.Operation:
-                updatedModel = CalculateModelForRemovedElement(operationsModel, viewID);
+                updatedModel = CalculateModelForRemovedElement(operationsModel, elementID);
                 RaiseUpdateClassContentEvent(elementType, updatedModel, operationsModel);
                 break;
         }
@@ -291,43 +291,76 @@ public class ClassContentSynchronizer : MonoBehaviourPunCallbacks, IOnEventCallb
             case ClassElementType.Operation:
                 elementsModel = operationsModel;
                 break;
-        } 
+        }
 
-        //bring the element model (IDs & their order) in sync with the updated specification in updatedElements.
         int updatingElementIndex;
-        for (updatingElementIndex = 0; updatingElementIndex < updatedElements.Length; updatingElementIndex++)
+
+        for(updatingElementIndex = 0; updatingElementIndex < updatedElements.Length; updatingElementIndex++)
         {
-            if (elementsModel.Count > updatingElementIndex)
+            if (updatingElementIndex >= updatedElements.Length)
             {
-                if (updatedElements[updatingElementIndex] != elementsModel[updatingElementIndex])
+                //skip to deleting everything with index >= updatedElements.Length
+                RemoveLeftoverElements(updatingElementIndex, elementsModel, elementType);
+                break;
+            }
+            else if(updatingElementIndex >= elementsModel.Count)
+            {
+                //add all new elements that are in updatedElements but not in elementsModel
+                AddMissingElements(updatingElementIndex, updatedElements, elementsModel, elementType);
+                break;
+            }
+
+            int newElement = updatedElements[updatingElementIndex];
+            int oldElement = elementsModel[updatingElementIndex];
+
+            if (newElement != oldElement) //something changed at this index
+            {
+                if(elementsModel.Contains(newElement))//the element was moved here from a different position
                 {
-                    //TODO: This is not right yet
-                    if (updatedElements[updatingElementIndex] != elementsModel[updatingElementIndex])//There was an element moved from a different index in the list to the updatingElementIndex or the one at updatigElementIndex was deleted
-                    {
-                        if(updatedElements.Contains(elementsModel[updatingElementIndex]))//if the ID is still in the updatedElements it was just moved to a different position
-                        {
-                            int movedElement = elementsModel[updatingElementIndex];
-                            elementsModel.RemoveAt(elementsModel[updatingElementIndex]);
-                            elementsModel.Insert(updatingElementIndex, movedElement);
-                        }
-                    }
-                    //If an element was deleted it is now step by step being passed to the end of the list
+                    //move newElement from old to new position
+                    classSides.LocalMoveElement(elementType, newElement, updatingElementIndex);
+                    elementsModel.InsertOrAppend(updatingElementIndex, newElement);
+                }
+                else //the element was added at this position
+                {
+                    //add newElement at the current index
+                    classSides.LocalCreateElement(this, elementType, newElement, updatingElementIndex);
+                    elementsModel.Insert(updatingElementIndex, newElement);
                 }
             }
         }
+    }
 
-        for (int deleteElementIndex = updatingElementIndex; deleteElementIndex < elementsModel.Count; deleteElementIndex++)
+    private void AddMissingElements(int firstAddIndex, int[] updatedElements, List<int> elementsModel, ClassElementType elementType)
+    {
+        //Add all new elements that are not in the elementsModel yet
+        for (int addElementIndex = firstAddIndex; addElementIndex < updatedElements.Length; addElementIndex++)
+        {
+            //Add the ui element on all classes
+            classSides.LocalCreateElement(this, elementType, updatedElements[addElementIndex], addElementIndex);
+            //add the element to the model
+            elementsModel.Add(updatedElements[addElementIndex]);
+        }
+    }
+
+    /// <summary>
+    /// Removes the elements at the end of the elementsModel up to and including the element at the lastRemoveIndex
+    /// </summary>
+    /// <param name="lastRemoveIndex"></param>
+    /// <param name=""></param>
+    private void RemoveLeftoverElements(int lastRemoveIndex, List<int> elementsModel, ClassElementType elementType)
+    {
+        //we go over the list from back to front, so the element indicies in the model list don't shift during the for loop
+        for (int deleteElementIndex = elementsModel.Count; deleteElementIndex >= lastRemoveIndex; deleteElementIndex--)
         {
             //delete element at deleteElementIndex, because it was not present in the updatedElements list.
             int elementToDelete = elementsModel[deleteElementIndex];
-            //tell Class Side Mirror to delete the respective UI Element (The element with ID == elementToDelete.ViewID)
+            //tell Class Side Mirror to delete the respective UI Element
             classSides.LocalDeleteElement(elementType, elementToDelete);
             //Delete the element from the ContentSynchronizer's internal model
             elementsModel.RemoveAt(deleteElementIndex);
         }
     }
-
-    
 
     #endregion
 }

@@ -22,6 +22,14 @@ public class ClassSideMirror : MonoBehaviour
         }
     }
 
+    public void LocalMoveElement(ClassElementType elementType, int elementID, int newIndex)
+    {
+        foreach(ClassSide side in mirroredSides)
+        {
+            side.LocalMoveElement(elementType, elementID, newIndex);
+        }
+    }
+
     public void LocalDeleteElement(ClassElementType elementType, int elementID)
     {
         foreach(ClassSide side in mirroredSides)
