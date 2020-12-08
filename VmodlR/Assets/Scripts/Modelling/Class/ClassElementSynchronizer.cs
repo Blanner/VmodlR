@@ -46,6 +46,7 @@ public class ClassElementSynchronizer : MonoBehaviour, IOnEventCallback
 
     public void RemoteChangeValue(string newValue)
     {
+        Debug.Log("\nElementSync: Remote Change Value");
         //photonView.RequestOwnership();
 
         //recreate the content of the last change event received
@@ -85,6 +86,7 @@ public class ClassElementSynchronizer : MonoBehaviour, IOnEventCallback
         //Check if the event is a synchronization event for a class
         if(photonEvent.Code == EventCodes.synchronizeClassElement)
         {
+            Debug.Log("\nSynchronize Class Element Event Caught");
             //extract the sent data from the event
             Hashtable eventData = (Hashtable)photonEvent.CustomData;
             int elementID = (int)eventData["ElementID"];

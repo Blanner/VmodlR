@@ -51,6 +51,7 @@ public class ClassSideElement : MonoBehaviour//Pun
     /// <param name="newValue"></param>
     public void RemoteChangeValue(string newValue)
     {
+        Debug.Log("\nElement: Remote Change Value");
         elementSynchronizer.RemoteChangeValue(newValue);
     }
 

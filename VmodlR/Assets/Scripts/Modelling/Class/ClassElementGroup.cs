@@ -29,6 +29,16 @@ public class ClassElementGroup : MonoBehaviour
         ClassElementSynchronizer elementSynchronizer = classElementGO.GetComponent<ClassElementSynchronizer>();
         classElement.Initialize(elementType, elementID, elementSynchronizer, masterSynchronizer);
         elementSynchronizer.Initialize(sideMirror, classElement);
+
+        //Insert the new class element at the correct position
+        if (classSideElements.Count - 1 >= elementIndex)
+        {
+            classSideElements.Insert(elementIndex, classElement);
+        }
+        else
+        {
+            classSideElements.Add(classElement);
+        }
     }
 
     public void LocalDeleteElement(int elementID)
