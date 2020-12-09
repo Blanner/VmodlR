@@ -12,8 +12,10 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 public class ClassContentSynchronizer : MonoBehaviourPunCallbacks, IOnEventCallback
 {
     public static string currMaxIDKey = "CurrMaxID";
-    public static string lastAddedIndexKey = "LastAddedIndex";
+    //public static string lastAddedIndexKey = "LastAddedIndex";
     public static string lastAddedElemTypeKey = "LastAddedElemType";
+
+    public static string synchronizerIDKey = "SynchronizerID";
 
     public ClassSideMirror classSides;
 
@@ -22,7 +24,15 @@ public class ClassContentSynchronizer : MonoBehaviourPunCallbacks, IOnEventCallb
     private List<int> fieldsModel = new List<int>();
     private List<int> operationsModel = new List<int>();
 
+    private Queue<AddElementRequest> openElementRequests = new Queue<AddElementRequest>();
+
     #endregion
+
+    private struct AddElementRequest
+    {
+        public ClassElementType elementType { get; set; }
+        public int elementIndex { get; set; }
+    }
 
     #region Monobehaviour Callbacks
 
@@ -34,15 +44,17 @@ public class ClassContentSynchronizer : MonoBehaviourPunCallbacks, IOnEventCallb
         try
         {
             int currMaxID = (int)PhotonNetwork.CurrentRoom.CustomProperties[currMaxIDKey];
-            int lastAddedIndex = (int)PhotonNetwork.CurrentRoom.CustomProperties[lastAddedIndexKey];
+            //int lastAddedIndex = (int)PhotonNetwork.CurrentRoom.CustomProperties[lastAddedIndexKey];
             ClassElementType lastAddedType = (ClassElementType)PhotonNetwork.CurrentRoom.CustomProperties[lastAddedElemTypeKey];
+            int synchronizerID = (int)PhotonNetwork.CurrentRoom.CustomProperties[synchronizerIDKey];
         }
         catch(NullReferenceException)
         {
             //If the properties don't exist yet, create them with default values
             Hashtable initialProperties = new Hashtable();
             initialProperties[currMaxIDKey] = -1;
-            initialProperties[lastAddedIndexKey] = -1;
+            //initialProperties[lastAddedIndexKey] = -1;
+            initialProperties[synchronizerIDKey] = -1;
             initialProperties[lastAddedElemTypeKey] = ClassElementType.Field;//This is just a default value, it does not actually matter, it just has to be set to some value.
             PhotonNetwork.CurrentRoom.SetCustomProperties(initialProperties);
         }
@@ -104,31 +116,6 @@ public class ClassContentSynchronizer : MonoBehaviourPunCallbacks, IOnEventCallb
         }
     }
 
-    public void AddElementAt(int insertAtIndex, ClassElementType newElementType)
-    {
-        //get the current MaxID, lastAddedIndex & lastAddedElementType
-        Room room = PhotonNetwork.CurrentRoom;
-        Hashtable hasttable = room.CustomProperties;
-        int currMaxID = (int)hasttable[currMaxIDKey];
-        int lastAddedIndex = (int)hasttable[lastAddedIndexKey];
-        ClassElementType lastAddedType = (ClassElementType)hasttable[lastAddedElemTypeKey];
-
-        //put those old property values in a hashtable, to perform a check-and-set with (See https://doc.photonengine.com/en-us/pun/v2/gameplay/synchronization-and-state#custom_properties)
-        Hashtable expectedProperty = new Hashtable();
-        expectedProperty[currMaxIDKey] = currMaxID;
-        expectedProperty[lastAddedIndexKey] = lastAddedIndex;
-        expectedProperty[lastAddedElemTypeKey] = lastAddedType;
-
-        //Try to set the new property values by check-and-set, this will trigger a callback if it succeeds, which then spawns the new model element.
-        //If not nothing happens. This will only fail if two clients spawn an element almost simultaneously
-        int newID = currMaxID + 1;
-        Hashtable updatedProperty = new Hashtable();
-        updatedProperty[currMaxIDKey] = newID;
-        updatedProperty[lastAddedIndexKey] = insertAtIndex;
-        updatedProperty[lastAddedElemTypeKey] = newElementType;
-        PhotonNetwork.CurrentRoom.SetCustomProperties(updatedProperty, expectedProperty);
-    }
-
     public void DeleteElement(ClassElementType elementType, int elementID)
     {
         int[] updatedModel;
@@ -151,7 +138,7 @@ public class ClassContentSynchronizer : MonoBehaviourPunCallbacks, IOnEventCallb
 
     public void OnEvent(EventData photonEvent)
     {
-        if(photonEvent.Code == EventCodes.updateClassContent)
+        if (photonEvent.Code == EventCodes.updateClassContent)
         {
             //extract the sent data from the event
             Hashtable eventData = (Hashtable)photonEvent.CustomData;
@@ -159,10 +146,26 @@ public class ClassContentSynchronizer : MonoBehaviourPunCallbacks, IOnEventCallb
             //check if the class that the event wants to synchronize is this class
             if (contentSynchronizerID == photonView.ViewID)
             {
+                Debug.Log("\nUpdateClassContent Event Caught");
                 int[] updatedElementIDs = (int[])eventData["UpdatedElementIDs"];
                 ClassElementType elementsType = (ClassElementType)eventData["UpdatedElementsType"];
                 UpdateElementExistence(updatedElementIDs, elementsType);
             }
+        }
+        else if (photonEvent.Code == EventCodes.synchronizeClassElement)
+        {
+            Hashtable eventData = (Hashtable)photonEvent.CustomData;
+            int elementID = (int)eventData["ElementID"];
+            string newElementValue = (string)eventData["NewElementText"];
+            ClassElementType elementType = (ClassElementType)eventData["ElementType"];
+
+            //TODO:
+            //figure out if the events belongs to an element that should - but maybe is no yet - be an Element of this class
+            //if the element already exists do nothing, if not cache the event and forward it to the respective elementSynchronizer once it exists
+            //Otherwise the field names do not get synchronized correctly on rejoin
+            //
+            //Edit: This can be done in a centralized event cache, that caches all raised ElementSyncEvents until all ClassContentSynchronizers have reported that their setup is done
+            //The cache then reraises the synchronization events and afterwards deletes itself
         }
     }
 
@@ -174,6 +177,59 @@ public class ClassContentSynchronizer : MonoBehaviourPunCallbacks, IOnEventCallb
     {
         base.OnRoomPropertiesUpdate(propertiesThatChanged);
 
+        if(openElementRequests.Count == 0)
+        {
+            //if this content synchronizer has no open Add element requests, we don't need to do anything here (the properties were changed by another contentSynchronizer)
+            Debug.Log("\nClass has no open element requests");
+            return;
+        }
+        else
+        {
+            //if we have open requests, we check if our properties change atempt came through and we are the synchronizer that changed the properties to their new value
+            int synchronizerID = (int)propertiesThatChanged[synchronizerIDKey];
+
+            if (synchronizerID == photonView.ViewID)
+            {
+                
+                //we now know that we tried to change the properties successfully, so we now have a new unique ID for our new element
+                int newElementID = (int)propertiesThatChanged[currMaxIDKey];
+                //Therefore we remove the open add element request from the queue, since the request has been processed (we got a new unique ID)
+                AddElementRequest elementRequest = openElementRequests.Dequeue();
+                //And we can raise an event that will make all instances of this class content synchronizer add the new element with the correct ID 
+
+                int[] updatedModel;
+                switch (elementRequest.elementType)
+                {
+                    case ClassElementType.Field:
+                        updatedModel = CalculateModelForAddedElement(fieldsModel, elementRequest.elementIndex, newElementID);
+                        RaiseUpdateClassContentEvent(elementRequest.elementType, updatedModel, fieldsModel);
+                        break;
+                    case ClassElementType.Operation:
+                        updatedModel = CalculateModelForAddedElement(operationsModel, elementRequest.elementIndex, newElementID);
+                        RaiseUpdateClassContentEvent(elementRequest.elementType, updatedModel, operationsModel);
+                        break;
+                }
+
+                if(openElementRequests.Count > 0)
+                {
+                    //if there are still elementRequests in the queue, we attempt to change the properties acording to the next request in the queue
+                    AddElementRequest newestAddRequest = openElementRequests.Peek();
+                    AtemptAddElementPropertyChange(newestAddRequest);
+                }
+            }
+            else
+            {
+                
+                //We now know that we tried to change properties, but our change atempt id not come through because another synchronizer atempted to change properties at approximatly the same time
+                //So we have to retry the change, now that the other synchronizer has sucsessfully changed properties
+                AddElementRequest newestAddRequest = openElementRequests.Peek();
+                AtemptAddElementPropertyChange(newestAddRequest);
+            }
+        }
+
+        /*
+         * OLD
+         
         int currMaxID = (int)propertiesThatChanged[currMaxIDKey];
         int lastAddedIndex = (int)propertiesThatChanged[lastAddedIndexKey];
         ClassElementType lastAddedElemType = (ClassElementType)propertiesThatChanged[lastAddedElemTypeKey];
@@ -191,11 +247,88 @@ public class ClassContentSynchronizer : MonoBehaviourPunCallbacks, IOnEventCallb
             //Instruct class sides to add the new element to the actual GameObject 
             classSides.LocalCreateElement(this, lastAddedElemType, currMaxID, finalIndex);
         }
+        */
     }
 
     #endregion
 
     #region Private Methods
+
+    /// <summary>
+    /// Adds a new AddElementRequest to the request queue and starts a AddElementPropertyChange atempt
+    /// </summary>
+    /// <param name="insertAtIndex"></param>
+    /// <param name="newElementType"></param>
+    private void AddElementAt(int insertAtIndex, ClassElementType newElementType)
+    {
+        AddElementRequest newAddElementRequest = new AddElementRequest();
+        newAddElementRequest.elementIndex = insertAtIndex;
+        newAddElementRequest.elementType = newElementType;
+        openElementRequests.Enqueue(newAddElementRequest);
+
+        AtemptAddElementPropertyChange(newAddElementRequest);
+    }
+
+    /// <summary>
+    /// Atempts to change the global room properties to get a new unique ID for the new element
+    /// </summary>
+    /// <param name="addElementRequest"></param>
+    private void AtemptAddElementPropertyChange(AddElementRequest addElementRequest)
+    {
+        //get the current MaxID, lastAddedIndex & lastAddedElementType
+        Room room = PhotonNetwork.CurrentRoom;
+        Hashtable hasttable = room.CustomProperties;
+        int currMaxID = (int)hasttable[currMaxIDKey];
+        int synchronizerID = (int)hasttable[synchronizerIDKey];
+
+        //put those old property values in a hashtable, to perform a check-and-set with (See https://doc.photonengine.com/en-us/pun/v2/gameplay/synchronization-and-state#custom_properties)
+        Hashtable expectedProperty = new Hashtable();
+        expectedProperty[currMaxIDKey] = currMaxID;
+        expectedProperty[synchronizerIDKey] = synchronizerID;
+
+        //Try to set the new property values by check-and-set, this will trigger a callback if it succeeds, which then spawns the new model element.
+        //If not nothing happens. This will only fail if two clients spawn an element almost simultaneously
+        int newID = currMaxID + 1;
+        Hashtable updatedProperty = new Hashtable();
+        updatedProperty[currMaxIDKey] = newID;
+        updatedProperty[synchronizerIDKey] = photonView.ViewID;
+        PhotonNetwork.CurrentRoom.SetCustomProperties(updatedProperty, expectedProperty);
+
+        /*
+         * OLD
+         
+        //get the current MaxID, lastAddedIndex & lastAddedElementType
+        Room room = PhotonNetwork.CurrentRoom;
+        Hashtable hasttable = room.CustomProperties;
+        int currMaxID = (int)hasttable[currMaxIDKey];
+        int lastAddedIndex = (int)hasttable[lastAddedIndexKey];
+        ClassElementType lastAddedType = (ClassElementType)hasttable[lastAddedElemTypeKey];
+
+        //put those old property values in a hashtable, to perform a check-and-set with (See https://doc.photonengine.com/en-us/pun/v2/gameplay/synchronization-and-state#custom_properties)
+        Hashtable expectedProperty = new Hashtable();
+        expectedProperty[currMaxIDKey] = currMaxID;
+        expectedProperty[lastAddedIndexKey] = lastAddedIndex;
+        expectedProperty[lastAddedElemTypeKey] = lastAddedType;
+
+        //Try to set the new property values by check-and-set, this will trigger a callback if it succeeds, which then spawns the new model element.
+        //If not nothing happens. This will only fail if two clients spawn an element almost simultaneously
+        int newID = currMaxID + 1;
+        Hashtable updatedProperty = new Hashtable();
+        updatedProperty[currMaxIDKey] = newID;
+        updatedProperty[lastAddedIndexKey] = addElementRequest.elementIndex;
+        updatedProperty[lastAddedElemTypeKey] = addElementRequest.elementType;
+        PhotonNetwork.CurrentRoom.SetCustomProperties(updatedProperty, expectedProperty);
+        */
+    }
+
+    private int[] CalculateModelForAddedElement(List<int> model, int addedElementIndex, int addedElementID)
+    {
+        List<int> modelList = CloneModelList(model);
+
+        modelList.InsertOrAppend(addedElementIndex, addedElementID);
+
+        return modelList.ToArray();
+    }
 
     private int[] CalculateModelForRemovedElement(List<int> model, int removeElementID)
     { 
@@ -216,43 +349,10 @@ public class ClassContentSynchronizer : MonoBehaviourPunCallbacks, IOnEventCallb
         return modelList;
     }
 
-    private int AddElementToModel(ClassElementType elementType, int elementID, int elementIndex)
-    {
-        switch(elementType)
-        {
-            case ClassElementType.Field:
-                if(fieldsModel.Count -1 >= elementIndex)
-                {
-                    //if the index already exists, insert the new element
-                    fieldsModel.Insert(elementIndex, elementID);
-                    return elementIndex;
-                }
-                else
-                {
-                    //if the index does not exist, append the element to the end of the list and return its index
-                    fieldsModel.Add(elementID);
-                    return fieldsModel.Count - 1;
-                }
-            case ClassElementType.Operation:
-                if (operationsModel.Count - 1 >= elementIndex)
-                {
-                    //if the index already exists, insert the new element
-                    operationsModel.Insert(elementIndex, elementID);
-                    return elementIndex;
-                }
-                else
-                {
-                    //if the index does not exist, append the element to the end of the list and return its index
-                    operationsModel.Add(elementID);
-                    return operationsModel.Count - 1;
-                }
-        }
-        //This should never be called, linter falsly says that not all code path return a value
-        return -1;
-    }
-
     private void RaiseUpdateClassContentEvent(ClassElementType elementType, int[] updatedModel, List<int> originalModel)
     {
+        //Debug.Log("\nRaising Update Class Conent Event");
+
         Hashtable oldContent = new Hashtable();
         oldContent.Add("ContentSynchronizerID", photonView.ViewID);
         oldContent.Add("UpdatedElementIDs", originalModel.ToArray());//this is still the "old" model
@@ -293,7 +393,7 @@ public class ClassContentSynchronizer : MonoBehaviourPunCallbacks, IOnEventCallb
                 break;
         }
 
-        Debug.Log($"\nStarting Element Update:\nOld Model: {ArrayUtils.ArrayToString<int>(elementsModel.ToArray())}\nUpdatedElements: {ArrayUtils.ArrayToString<int>(updatedElements)}");
+        //Debug.Log($"\nStarting Element Update:\nOld Model: {ArrayUtils.ArrayToString<int>(elementsModel.ToArray())}\nUpdatedElements: {ArrayUtils.ArrayToString<int>(updatedElements)}");
 
         int updatingElementIndex;
 
@@ -334,8 +434,8 @@ public class ClassContentSynchronizer : MonoBehaviourPunCallbacks, IOnEventCallb
             RemoveLeftoverElements(updatingElementIndex, elementsModel, elementType);
         }
 
-            //Debug
-            Debug.Log($"\nUpdated Element Existence:\nElementsType: {elementType}\nUpdatedModel: {ArrayUtils.ArrayToString<int>(elementsModel.ToArray())}\nUpdatedElements: {ArrayUtils.ArrayToString<int>(updatedElements)}");
+        //Debug
+        //Debug.Log($"\nUpdated Element Existence:\nElementsType: {elementType}\nUpdatedModel: {ArrayUtils.ArrayToString<int>(elementsModel.ToArray())}\nUpdatedElements: {ArrayUtils.ArrayToString<int>(updatedElements)}");
     }
 
     /// <summary>
@@ -360,7 +460,6 @@ public class ClassContentSynchronizer : MonoBehaviourPunCallbacks, IOnEventCallb
     /// <param name=""></param>
     private void RemoveLeftoverElements(int lastRemoveIndex, List<int> elementsModel, ClassElementType elementType)
     {
-        Debug.Log($"\nRemvoe leftover Elements: lastremoveIndex: {lastRemoveIndex}, elementsModel Count: {elementsModel.Count}");
         //we go over the list from back to front, so the element indicies in the model list don't shift during the for loop
         for (int deleteElementIndex = elementsModel.Count - 1; deleteElementIndex >= lastRemoveIndex; deleteElementIndex--)
         {

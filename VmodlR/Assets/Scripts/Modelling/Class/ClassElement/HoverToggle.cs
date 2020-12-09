@@ -26,7 +26,7 @@ public class HoverToggle : MonoBehaviour
         {
             collider.Initialize(this);
         }
-        Debug.Log($"Found {uiColliders.Length} HoverToggleColliders in children of GO {gameObject}");
+        //Debug.Log($"Found {uiColliders.Length} HoverToggleColliders in children of GO {gameObject}");
     }
 
     public void UpdateToggle()
