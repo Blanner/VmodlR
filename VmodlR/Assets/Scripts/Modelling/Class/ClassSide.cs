@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,6 +7,7 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Canvas), typeof(OVRRaycaster))]
 public class ClassSide : MonoBehaviour
 {
+    public ClassNameSynchronizer nameSynchronizer;
     public ClassElementGroup fields;
     public ClassElementGroup operations;
     public VerticalLayoutGroup bodyVerticalLayoutGroup;
@@ -24,6 +26,15 @@ public class ClassSide : MonoBehaviour
         {
             Debug.LogError($"Fields Element Group is not assigned on {gameObject.name}!");
         }
+        if(nameSynchronizer == null)
+        {
+            Debug.LogError($"Name Synchronizer is not assigned on {gameObject.name}!");
+        }
+    }
+
+    public void LocalChangeClassName(string newName)
+    {
+        nameSynchronizer.LocalChangeName(newName);
     }
 
     public void LocalChangeElement(ClassElementType elementType, int elementID, string newValue)

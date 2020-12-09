@@ -6,6 +6,14 @@ public class ClassSideMirror : MonoBehaviour
 {
     public List<ClassSide> mirroredSides = new List<ClassSide>();
 
+    public void LocalChangeClassName(string newName)
+    {
+        foreach(ClassSide side in mirroredSides)
+        {
+            side.LocalChangeClassName(newName);
+        }
+    }
+
     public void LocalChangeElement(ClassElementType elementType, int elementID, string newValue)
     {
         foreach(ClassSide side in mirroredSides)
