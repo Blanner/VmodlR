@@ -25,7 +25,7 @@ public class ClassSideElement : MonoBehaviour//Pun
 
     public void Awake()
     {
-        if(elementInputField == null)
+        if (elementInputField == null)
         {
             Debug.LogError($"Input Field for Class Side Element is null on {gameObject.name}!");
         }
@@ -38,6 +38,16 @@ public class ClassSideElement : MonoBehaviour//Pun
         this.elementSynchronizer = elementSynchronizer;
         this.masterSynchronizer = masterSynchronizer;
     }
+
+    /// <summary>
+    /// Forwards a deletion order to the ClassContentSynchronizer to delete this element synchronously.
+    /// This does not delete the element immediatly, it just initiates the process of synchronious deletion
+    /// </summary>
+    public void RemoteDeleteElement()
+    {
+        masterSynchronizer.DeleteElement(ElementType, ElementID);
+    }
+
 
     public void RemoteAddElementBelow()
     {
@@ -64,14 +74,5 @@ public class ClassSideElement : MonoBehaviour//Pun
     {
         elementInputField.SetTextWithoutNotify(newValue);
         elementSynchronizer.LocalChangeValue(newValue);
-    }
-
-    /// <summary>
-    /// Forwards a deletion order to the ClassContentSynchronizer to delete this element synchronously.
-    /// This does not delete the element immediatly, it just initiates the process of synchronious deletion
-    /// </summary>
-    public void RemoteDeleteElement()
-    {
-        masterSynchronizer.DeleteElement(ElementType, ElementID);
     }
 }

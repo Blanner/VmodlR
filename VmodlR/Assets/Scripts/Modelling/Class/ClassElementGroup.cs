@@ -36,9 +36,9 @@ public class ClassElementGroup : MonoBehaviour
     public void LocalMoveElement(int elementID, int newIndex)
     {
         ClassSideElement moveElement = classSideElements.Find(element => element.ElementID == elementID);
-        if(moveElement)
+        if(moveElement == null)
         {
-            Debug.LogError($"tried to move element {elementID} to index {newIndex} but the element was not present on classSide {gameObject.name}");
+            Debug.LogError($"\nTried to move element {elementID} to index {newIndex} but the element was not present on classSide {gameObject.name}");
             return;
         }
         //remove from previous position

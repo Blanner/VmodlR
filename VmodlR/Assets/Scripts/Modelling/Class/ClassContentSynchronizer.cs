@@ -293,17 +293,13 @@ public class ClassContentSynchronizer : MonoBehaviourPunCallbacks, IOnEventCallb
                 break;
         }
 
+        Debug.Log($"\nStarting Element Update:\nOld Model: {ArrayUtils.ArrayToString<int>(elementsModel.ToArray())}\nUpdatedElements: {ArrayUtils.ArrayToString<int>(updatedElements)}");
+
         int updatingElementIndex;
 
         for(updatingElementIndex = 0; updatingElementIndex < updatedElements.Length; updatingElementIndex++)
         {
-            if (updatingElementIndex >= updatedElements.Length)
-            {
-                //skip to deleting everything with index >= updatedElements.Length
-                RemoveLeftoverElements(updatingElementIndex, elementsModel, elementType);
-                break;
-            }
-            else if(updatingElementIndex >= elementsModel.Count)
+            if(updatingElementIndex >= elementsModel.Count)
             {
                 //add all new elements that are in updatedElements but not in elementsModel
                 AddMissingElements(updatingElementIndex, updatedElements, elementsModel, elementType);
@@ -319,7 +315,8 @@ public class ClassContentSynchronizer : MonoBehaviourPunCallbacks, IOnEventCallb
                 {
                     //move newElement from old to new position
                     classSides.LocalMoveElement(elementType, newElement, updatingElementIndex);
-                    elementsModel.InsertOrAppend(updatingElementIndex, newElement);
+                    elementsModel.Remove(newElement);//remove at from the old index
+                    elementsModel.InsertOrAppend(updatingElementIndex, newElement);//re-add at the new index
                 }
                 else //the element was added at this position
                 {
@@ -329,8 +326,21 @@ public class ClassContentSynchronizer : MonoBehaviourPunCallbacks, IOnEventCallb
                 }
             }
         }
+
+        //if there are elements left over at the end of the elementsModel, delete those leftover elements
+        if (elementsModel.Count > updatedElements.Length)
+        {
+            //skip to deleting everything with index >= updatedElements.Length
+            RemoveLeftoverElements(updatingElementIndex, elementsModel, elementType);
+        }
+
+            //Debug
+            Debug.Log($"\nUpdated Element Existence:\nElementsType: {elementType}\nUpdatedModel: {ArrayUtils.ArrayToString<int>(elementsModel.ToArray())}\nUpdatedElements: {ArrayUtils.ArrayToString<int>(updatedElements)}");
     }
 
+    /// <summary>
+    /// Adds elements that are present in <param name="updatedElements"> to the <param name="elementsModel"> starting from <param name="firstAddIndex">
+    /// </summary>
     private void AddMissingElements(int firstAddIndex, int[] updatedElements, List<int> elementsModel, ClassElementType elementType)
     {
         //Add all new elements that are not in the elementsModel yet
@@ -350,8 +360,9 @@ public class ClassContentSynchronizer : MonoBehaviourPunCallbacks, IOnEventCallb
     /// <param name=""></param>
     private void RemoveLeftoverElements(int lastRemoveIndex, List<int> elementsModel, ClassElementType elementType)
     {
+        Debug.Log($"\nRemvoe leftover Elements: lastremoveIndex: {lastRemoveIndex}, elementsModel Count: {elementsModel.Count}");
         //we go over the list from back to front, so the element indicies in the model list don't shift during the for loop
-        for (int deleteElementIndex = elementsModel.Count; deleteElementIndex >= lastRemoveIndex; deleteElementIndex--)
+        for (int deleteElementIndex = elementsModel.Count - 1; deleteElementIndex >= lastRemoveIndex; deleteElementIndex--)
         {
             //delete element at deleteElementIndex, because it was not present in the updatedElements list.
             int elementToDelete = elementsModel[deleteElementIndex];
