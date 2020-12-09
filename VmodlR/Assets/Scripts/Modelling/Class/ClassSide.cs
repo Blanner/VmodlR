@@ -32,6 +32,11 @@ public class ClassSide : MonoBehaviour
         }
     }
 
+    void Start()
+    {
+        UpdateElementLayout();
+    }
+
     public void LocalChangeClassName(string newName)
     {
         nameSynchronizer.LocalChangeName(newName);

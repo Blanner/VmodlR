@@ -46,7 +46,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cursorVisual: {fileID: 5824905916421758235}
   maxLength: 10
-  joyPadToggleButton: 1
+  joyPadToggleButton: 2
   _laserBeamBehavior: 0
 --- !u!120 &5824905915477797929
 LineRenderer:
@@ -737,7 +737,7 @@ Transform:
   m_GameObject: {fileID: 5824905916421758235}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
+  m_LocalScale: {x: 0.03, y: 0.03, z: 0.03}
   m_Children: []
   m_Father: {fileID: 5824905915827879577}
   m_RootOrder: 1
@@ -914,7 +914,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rayTransform: {fileID: 5824905916329694683}
   m_Cursor: {fileID: 5824905915477797928}
-  joyPadClickButton: 2097152
+  PrimaryJoyPadClickButton: 2097152
+  SecondaryJoyPadClickButton: 1
   gazeClickKey: 32
   performSphereCastForGazepointer: 0
   useRightStickScroll: 1

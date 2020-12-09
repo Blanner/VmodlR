@@ -4906,7 +4906,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cursorVisual: {fileID: 9117702330244493171}
   maxLength: 10
-  joyPadToggleButton: 1
+  joyPadToggleButton: 2
   _laserBeamBehavior: 0
 --- !u!120 &9117702330244491896
 LineRenderer:
@@ -6202,7 +6202,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rayTransform: {fileID: 9117702330244492514}
   m_Cursor: {fileID: 9117702330244492064}
-  joyPadClickButton: 2097152
+  PrimaryJoyPadClickButton: 2097152
+  SecondaryJoyPadClickButton: 1
   gazeClickKey: 32
   performSphereCastForGazepointer: 0
   useRightStickScroll: 1
