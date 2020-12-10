@@ -15,7 +15,8 @@ GameObject:
   - component: {fileID: 7151276276990927273}
   - component: {fileID: 6761037759335871922}
   - component: {fileID: 6781507668251678996}
-  m_Layer: 0
+  - component: {fileID: 8913729380770157973}
+  m_Layer: 11
   m_Name: ConnectorLine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -142,6 +143,20 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &8913729380770157973
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2588045190494047948}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e253fd4c039ca124f9e33ba9343d20ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rootPhotonView: {fileID: 8801567902487481478}
+  deletableRenderer: {fileID: 2588045192336320315}
 --- !u!1 &2588045192336320313
 GameObject:
   m_ObjectHideFlags: 0
@@ -153,7 +168,8 @@ GameObject:
   - component: {fileID: 2588045192336320312}
   - component: {fileID: 2588045192336320314}
   - component: {fileID: 2588045192336320315}
-  m_Layer: 0
+  - component: {fileID: 5020004890750999766}
+  m_Layer: 11
   m_Name: 1mConnector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -223,6 +239,20 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &5020004890750999766
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2588045192336320313}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &5775626833256230638
 GameObject:
   m_ObjectHideFlags: 0
@@ -234,7 +264,7 @@ GameObject:
   - component: {fileID: 6587911580204397652}
   - component: {fileID: 7837157498515422193}
   - component: {fileID: 5415537256370540347}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: InheritanceHead
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -318,7 +348,7 @@ GameObject:
   - component: {fileID: 1929948970543122735}
   - component: {fileID: 724905726573500809}
   - component: {fileID: 1981939400385695712}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: AssociationHead
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -436,7 +466,7 @@ GameObject:
   - component: {fileID: 7411951640340235571}
   - component: {fileID: 7411951640340235574}
   - component: {fileID: 7411951640340235573}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: AssociationHeadUp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -517,7 +547,7 @@ GameObject:
   - component: {fileID: 7411951640564830787}
   - component: {fileID: 7411951640564830790}
   - component: {fileID: 7411951640564830789}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: AssociationHeadDown
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -601,7 +631,7 @@ GameObject:
   - component: {fileID: 8300212247555268925}
   - component: {fileID: 5824365145407513766}
   - component: {fileID: 8300212247555268926}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: AggregationHead
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -718,7 +748,7 @@ GameObject:
   - component: {fileID: 8300212247767164658}
   - component: {fileID: 8300212247767164671}
   - component: {fileID: 8300212247767164656}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: AssociationHeadUp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1000,7 +1030,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8300212248299375128}
-  m_Layer: 0
+  - component: {fileID: 8801567902487481478}
+  m_Layer: 11
   m_Name: UndirectedAssociation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1028,6 +1059,28 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8801567902487481478
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8300212248299375129}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  observableSearch: 2
+  Synchronization: 3
+  OwnershipTransfer: 1
+  ObservedComponents: []
+  viewIdField: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &8300212248308809401
 GameObject:
   m_ObjectHideFlags: 0
@@ -1042,7 +1095,7 @@ GameObject:
   - component: {fileID: 8300212248308809382}
   - component: {fileID: 1558763585479263955}
   - component: {fileID: 8300212248308809383}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: InheritanceHead
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1162,7 +1215,7 @@ GameObject:
   - component: {fileID: 8300212248346700635}
   - component: {fileID: 677328067702646863}
   - component: {fileID: 8300212248346700636}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: CompositionHead
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1481,7 +1534,7 @@ GameObject:
   - component: {fileID: 8300212248769763290}
   - component: {fileID: 8300212248769763288}
   - component: {fileID: 8300212248769763289}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: DoubleConeHead
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1560,7 +1613,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8300212248935796730}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: VerticalHead
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1592,7 +1645,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8300212249141046694}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: HorizontalHead
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1626,7 +1679,7 @@ GameObject:
   - component: {fileID: 8300212249420252693}
   - component: {fileID: 8300212249420252690}
   - component: {fileID: 8300212249420252691}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: AssociationHeadDown
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1707,7 +1760,7 @@ GameObject:
   - component: {fileID: 8285159600482605292}
   - component: {fileID: 4995925027424687945}
   - component: {fileID: 7111711706622010243}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: DoubleConeHead
   m_TagString: Untagged
   m_Icon: {fileID: 0}

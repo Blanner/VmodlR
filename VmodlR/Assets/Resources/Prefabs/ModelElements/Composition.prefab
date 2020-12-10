@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 2226895929162379291}
   - component: {fileID: 2226895929162379289}
   - component: {fileID: 2226895929162379288}
-  m_Layer: 0
+  - component: {fileID: 361898638575452729}
+  m_Layer: 11
   m_Name: 1mConnector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -81,6 +82,20 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &361898638575452729
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2226895929162379290}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &2226895930692458991
 GameObject:
   m_ObjectHideFlags: 0
@@ -96,7 +111,8 @@ GameObject:
   - component: {fileID: 6787906012203021962}
   - component: {fileID: 6978639240214487697}
   - component: {fileID: 7138717937243459127}
-  m_Layer: 0
+  - component: {fileID: 7444347256624274538}
+  m_Layer: 11
   m_Name: ConnectorLine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -223,6 +239,20 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &7444347256624274538
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2226895930692458991}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e253fd4c039ca124f9e33ba9343d20ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rootPhotonView: {fileID: 6570823043040044400}
+  deletableRenderer: {fileID: 2226895929162379288}
 --- !u!1 &4952850189086823797
 GameObject:
   m_ObjectHideFlags: 0
@@ -234,7 +264,7 @@ GameObject:
   - component: {fileID: 5762320186267881423}
   - component: {fileID: 8671685723994210410}
   - component: {fileID: 6898656397031945376}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: DoubleConeHead
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -313,7 +343,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5637755213051566297}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: VerticalHead
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -345,7 +375,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5637755213122402949}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: HorizontalHead
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -379,7 +409,7 @@ GameObject:
   - component: {fileID: 5637755213405999414}
   - component: {fileID: 5637755213405999409}
   - component: {fileID: 5637755213405999408}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: AssociationHeadDown
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -663,7 +693,8 @@ GameObject:
   - component: {fileID: 5637755214030504185}
   - component: {fileID: 5637755214030504187}
   - component: {fileID: 5637755214030504186}
-  m_Layer: 0
+  - component: {fileID: 3767844645256429006}
+  m_Layer: 11
   m_Name: DoubleConeHead
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -733,6 +764,20 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &3767844645256429006
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5637755214030504184}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 3613567641014311022, guid: cdb35cf464611a541acbd86b94b38a28, type: 3}
 --- !u!1 &5637755214101301914
 GameObject:
   m_ObjectHideFlags: 0
@@ -901,6 +946,7 @@ MonoBehaviour:
   OwnershipTransfer: 1
   ObservedComponents:
   - {fileID: 5637755214101301889}
+  - {fileID: 5176622683608920502}
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -949,7 +995,8 @@ GameObject:
   - component: {fileID: 5637755214479801464}
   - component: {fileID: 3777193142477979500}
   - component: {fileID: 5637755214479801471}
-  m_Layer: 0
+  - component: {fileID: 8165846064758688971}
+  m_Layer: 11
   m_Name: CompositionHead
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1055,6 +1102,20 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &8165846064758688971
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5637755214479801469}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e253fd4c039ca124f9e33ba9343d20ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rootPhotonView: {fileID: 6570823043040044400}
+  deletableRenderer: {fileID: 2226895929162379288}
 --- !u!1 &5637755214492297626
 GameObject:
   m_ObjectHideFlags: 0
@@ -1069,7 +1130,7 @@ GameObject:
   - component: {fileID: 5637755214492297605}
   - component: {fileID: 2930933337867407856}
   - component: {fileID: 5637755214492297604}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: InheritanceHead
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1184,7 +1245,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5637755214495391035}
-  m_Layer: 0
+  - component: {fileID: 6570823043040044400}
+  m_Layer: 11
   m_Name: Composition
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1212,6 +1274,28 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6570823043040044400
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5637755214495391034}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  observableSearch: 2
+  Synchronization: 3
+  OwnershipTransfer: 1
+  ObservedComponents: []
+  viewIdField: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &5637755214741206547
 GameObject:
   m_ObjectHideFlags: 0
@@ -1226,7 +1310,7 @@ GameObject:
   - component: {fileID: 5637755214741206558}
   - component: {fileID: 7915461529725563781}
   - component: {fileID: 5637755214741206557}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: AggregationHead
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1343,7 +1427,7 @@ GameObject:
   - component: {fileID: 5637755215024468433}
   - component: {fileID: 5637755215024468444}
   - component: {fileID: 5637755215024468435}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: AssociationHeadUp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1424,7 +1508,7 @@ GameObject:
   - component: {fileID: 6616238447298023952}
   - component: {fileID: 6616238447298023957}
   - component: {fileID: 6616238447298023958}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: AssociationHeadUp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1505,7 +1589,7 @@ GameObject:
   - component: {fileID: 6616238447602173280}
   - component: {fileID: 6616238447602173285}
   - component: {fileID: 6616238447602173286}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: AssociationHeadDown
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1589,7 +1673,7 @@ GameObject:
   - component: {fileID: 2865869577600572940}
   - component: {fileID: 3963856539989495466}
   - component: {fileID: 2777683087498582211}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: AssociationHead
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1707,7 +1791,7 @@ GameObject:
   - component: {fileID: 7377430289945092983}
   - component: {fileID: 5894717508567264466}
   - component: {fileID: 8514839177382959128}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: InheritanceHead
   m_TagString: Untagged
   m_Icon: {fileID: 0}
