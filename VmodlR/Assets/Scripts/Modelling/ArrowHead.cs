@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ArrowHead : NetworkModelElement
+using Photon.Pun;
+
+public class ArrowHead : MonoBehaviourPun
 {
     [Tooltip("The distance between the tip of the arrow and the point where the connector this arrow head sits on should end")]
     public float TipDistance;
@@ -14,7 +16,7 @@ public class ArrowHead : NetworkModelElement
     /// <param name="forwardDirection"></param>
     public void UpdateTransform(Vector3 newPosition, Vector3 forwardDirection)
     {
-        RequestOwnership();
+        photonView.RequestOwnership();
         transform.position = newPosition;
         transform.rotation = Quaternion.LookRotation(forwardDirection, Vector3.up);
     }
