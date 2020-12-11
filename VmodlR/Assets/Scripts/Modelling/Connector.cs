@@ -65,6 +65,17 @@ public class Connector : MonoBehaviourPun, IOnEventCallback
         PhotonNetwork.RemoveCallbackTarget(this);
     }
 
+    void OnDestroy()
+    {
+        Debug.Log($"\nOnDestory called on GO {gameObject.name}");
+        //Detach the connector from all connected classes locally on this client
+        LocalDetachFromClass(originGrabVolume);
+        LocalDetachFromClass(targetGrabVolume);
+        //Detach this connector from all connected classes across the network
+        RemoteUpdateAttachState(ConnectorEndType.Origin, originClass, null, localOriginConnectionPoint);
+        RemoteUpdateAttachState(ConnectorEndType.Target, targetClass, null, localTargetConnectionPoint);
+    }
+
     #endregion
 
     #region Public Methods
@@ -78,7 +89,7 @@ public class Connector : MonoBehaviourPun, IOnEventCallback
     /// Detaches the connector from the class that is currently at the end of the connector the the given ConnectorGrabVolume corresponds to.
     /// </summary>
     /// <param name="connectorEndGrabVolume"></param>
-    public void DetachFromClass(ConnectorGrabVolume connectorEndGrabVolume)
+    public void LocalDetachFromClass(ConnectorGrabVolume connectorEndGrabVolume)
     {
         if(originGrabVolume == connectorEndGrabVolume)
         {

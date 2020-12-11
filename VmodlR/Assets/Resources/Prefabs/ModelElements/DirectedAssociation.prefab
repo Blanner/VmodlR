@@ -251,8 +251,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e253fd4c039ca124f9e33ba9343d20ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rootPhotonView: {fileID: 1768553933736963295}
-  deletableRenderer: {fileID: 307221588463137038}
+  parentElement: {fileID: 7326139668514818927}
 --- !u!1 &4716790210971286625
 GameObject:
   m_ObjectHideFlags: 0
@@ -387,8 +386,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e253fd4c039ca124f9e33ba9343d20ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rootPhotonView: {fileID: 1768553933736963295}
-  deletableRenderer: {fileID: 307221588463137038}
+  parentElement: {fileID: 7326139668514818927}
 --- !u!1 &4716790211402175239
 GameObject:
   m_ObjectHideFlags: 0
@@ -1450,6 +1448,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6096090607796296749}
   - component: {fileID: 1768553933736963295}
+  - component: {fileID: 7326139668514818927}
   m_Layer: 11
   m_Name: DirectedAssociation
   m_TagString: Untagged
@@ -1500,6 +1499,19 @@ MonoBehaviour:
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!114 &7326139668514818927
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6096090607796296748}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e240fc330ac8ecf4f9b050bed2cd41ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  deletableRenderer: {fileID: 307221588463137038}
 --- !u!1 &6096090607803623564
 GameObject:
   m_ObjectHideFlags: 0

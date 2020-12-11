@@ -288,6 +288,7 @@ GameObject:
   - component: {fileID: 1421717280835339103}
   - component: {fileID: 2547301215997277734}
   - component: {fileID: 144587042065391598}
+  - component: {fileID: 716820681317782606}
   m_Layer: 10
   m_Name: Class
   m_TagString: Untagged
@@ -516,7 +517,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e253fd4c039ca124f9e33ba9343d20ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rootPhotonView: {fileID: 1378691934575706992}
+  parentElement: {fileID: 716820681317782606}
+--- !u!114 &716820681317782606
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1378691934575706995}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e240fc330ac8ecf4f9b050bed2cd41ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   deletableRenderer: {fileID: 1378691934575706999}
 --- !u!1 &1378691934863775519
 GameObject:

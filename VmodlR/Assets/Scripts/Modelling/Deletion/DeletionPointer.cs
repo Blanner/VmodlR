@@ -81,17 +81,18 @@ public class DeletionPointer : MonoBehaviour
             hitDistance = (hitInfo.point - rayTransform.position).magnitude;
 
             //get the deletable element that belongs to the hit object - if there is one
-            DeletableElement newHitElement = hitInfo.transform.GetComponent<DeletableElement>();
+            DeletableCollider newHitCollider = hitInfo.transform.GetComponent<DeletableCollider>();
 
             //Pointer points at nothing deletable (anymore)
-            if(newHitElement == null)
+            if(newHitCollider == null)
             {
                 ResetDeletionMark();
-                Debug.LogError($"\nGameObject {hitInfo.transform.name} is in Class/Connector Layer but does not have a deletableElementCompnentAttached");
+                Debug.LogError($"\nGameObject {hitInfo.transform.name} is in Class/Connector Layer but does not have a deletableCollider Compnent Attached");
                 return;
             }
 
-            //pointer points at something deletable
+            DeletableElement newHitElement = newHitCollider.parentElement;
+
             if (newHitElement != this.lastHitElement)
             {
                 //if we hit something else in the previous frame, reset its state
@@ -116,11 +117,10 @@ public class DeletionPointer : MonoBehaviour
     {
         if(lastHitElement != null)
         {
-            //GO needs to be under this client's control to be deleted
-            lastHitElement.rootPhotonView.RequestOwnership();
-            //TODO: Debug print current owner
-            //delete the element over the network.
-            PhotonNetwork.Destroy(lastHitElement.rootPhotonView);
+            //delete the element over the network. This has to be done on master since model elements are room objects
+            lastHitElement.DeleteOnMaster(lastHitElement.photonView.ViewID);
+            lastHitElement = null;
+            hitStdMaterial = null;
         }
     }
 

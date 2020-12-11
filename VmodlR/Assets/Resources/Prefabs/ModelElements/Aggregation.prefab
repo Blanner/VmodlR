@@ -155,8 +155,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e253fd4c039ca124f9e33ba9343d20ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rootPhotonView: {fileID: 3143368724842904706}
-  deletableRenderer: {fileID: 3826097451246514420}
+  parentElement: {fileID: 7659530511920719575}
 --- !u!1 &3826097451246514422
 GameObject:
   m_ObjectHideFlags: 0
@@ -667,6 +666,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7332939018586643927}
   - component: {fileID: 3143368724842904706}
+  - component: {fileID: 7659530511920719575}
   m_Layer: 11
   m_Name: Aggregation
   m_TagString: Untagged
@@ -717,6 +717,19 @@ MonoBehaviour:
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!114 &7659530511920719575
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7332939018586643926}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e240fc330ac8ecf4f9b050bed2cd41ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  deletableRenderer: {fileID: 3826097451246514420}
 --- !u!1 &7332939018587646326
 GameObject:
   m_ObjectHideFlags: 0
@@ -970,8 +983,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e253fd4c039ca124f9e33ba9343d20ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rootPhotonView: {fileID: 3143368724842904706}
-  deletableRenderer: {fileID: 3826097451246514420}
+  parentElement: {fileID: 7659530511920719575}
 --- !u!1 &7332939019129221436
 GameObject:
   m_ObjectHideFlags: 0

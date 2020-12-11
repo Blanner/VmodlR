@@ -72,7 +72,7 @@ public class ConnectorGrabVolume : MonoBehaviour, IGrabListener
         Debug.Log($"\nOnGrab Begin on {gameObject.name}");
 
         isGrabbed = true;
-        connector.DetachFromClass(this);
+        connector.LocalDetachFromClass(this);
         meshRenderer.enabled = true;
     }
 
