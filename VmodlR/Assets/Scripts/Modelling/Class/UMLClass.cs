@@ -25,6 +25,19 @@ public class UMLClass : MonoBehaviourPun, IGrabListener
         }
     }
 
+    void OnDestroy()
+    {
+        //On destory is called locally on every client when we delete this object over the network.
+        //This means we only have to clean up the attach state locally but we have to make sure the latest attach event is properly updated
+        Debug.Log($"\nOnDestory called on GO {gameObject.name}");
+        //Detach the connector from all connected classes locally on this client
+        //The ToArray() call is vital because OnDestroyAttachedClass will mofiy the connectors List, in order to go over every connector exactly one we copy the list to an array
+        foreach (Connector connector in connectors.ToArray())
+        { 
+            connector.OnDestroyAttachedClass(this);
+        }
+    }
+
     #endregion
 
 

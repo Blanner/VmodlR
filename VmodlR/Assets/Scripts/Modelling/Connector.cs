@@ -114,6 +114,47 @@ public class Connector : MonoBehaviourPun, IOnEventCallback
     }
 
     /// <summary>
+    /// Detaches this connector from a class that is being destroyed across the network
+    /// Ensures that the cached attach state event is updated acordingly
+    /// </summary>
+    /// <param name="destroyedClass"></param>
+    public void OnDestroyAttachedClass(UMLClass destroyedClass)
+    {
+        if(destroyedClass == targetClass)
+        {
+            if (targetClass != null)
+            {
+                targetClass.RemoveConnector(this);
+            }
+
+            if (PhotonNetwork.IsMasterClient)
+            {
+                //Update the attach state event that is cached on the server
+                //we do this only on master client to ensure the event is not unnecessarily updated from all clients
+                RemoteUpdateAttachState(ConnectorEndType.Target, targetClass, null, localTargetConnectionPoint);
+            }
+            targetClass = null;
+        }
+        else if(destroyedClass == originClass)
+        {
+            if (originClass != null)
+            {
+                originClass.RemoveConnector(this);
+            }
+
+            if(PhotonNetwork.IsMasterClient)
+            {
+                RemoteUpdateAttachState(ConnectorEndType.Origin, originClass, null, localOriginConnectionPoint);
+            }
+            originClass = null;
+        }
+        else
+        {
+            Debug.LogError("Called DetachFromClass() for a class not attached to this connector.");
+        }
+    }
+
+    /// <summary>
     /// Tries to attach the end of the connector that the given ConnectorGrabVolume corresponds to to a class that this end of the connector currently points at. 
     /// If there is no class in that direction the connectors end stays loose.
     /// This updates the Transform of the connector, only call on the client that currently owns the connector
