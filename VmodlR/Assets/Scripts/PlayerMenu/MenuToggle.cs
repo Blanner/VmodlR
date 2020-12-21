@@ -11,16 +11,12 @@ public class MenuToggle : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if (buttonText == null)
-        {
-            Debug.LogError("Menu Toggle's Button text is null!");
-        }
         if (targetMenu == null)
         {
             Debug.LogError("Menu Toggle's targetMenu is null!");
         }
 
-        if(targetMenu != null && buttonText != null)
+        if(targetMenu != null)
         {
             SetMenuActive(false);
         }
@@ -48,13 +44,16 @@ public class MenuToggle : MonoBehaviour
     {
         targetMenu.SetActive(active);
 
-        if (targetMenu.activeSelf)
+        if(buttonText != null)
         {
-            buttonText.text = "<";
-        }
-        else
-        {
-            buttonText.text = ">";
+            if (targetMenu.activeSelf)
+            {
+                buttonText.text = "<";
+            }
+            else
+            {
+                buttonText.text = ">";
+            }
         }
     }
 }
