@@ -23,9 +23,10 @@ public class OpenRoomsManager : MonoBehaviourPunCallbacks
     private void UpdateOpenRoomsListUI(List<RoomInfo>  roomList)
     {
         //Destroy all children
-        for (int i = 0; i < contentTransform.childCount; i++)
+        int childCount = contentTransform.childCount;//this will be changing during the loop, so we have to cache it.
+        for (int i = 0; i < childCount; i++)
         {
-            DestroyImmediate(contentTransform.GetChild(i).gameObject);
+            DestroyImmediate(contentTransform.GetChild(0).gameObject);
         }
         
         //Create a new room ui for every entry in the roomList
