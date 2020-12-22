@@ -548,10 +548,6 @@ namespace Sigtrap.VrTunnellingPro {
 				#endif
 			}
 
-			if(speed != 0)
-			{
-				Debug.Log($"\nSpeed: {speed}");
-			}
 
 			if (useVelocity)//this needs to function independent of the stick, so smoothing stays active 
 			{

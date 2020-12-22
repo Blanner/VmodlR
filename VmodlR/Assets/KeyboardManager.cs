@@ -1,0 +1,88 @@
+﻿/**
+ * Copyright (c) 2017 The Campfire Union Inc - All Rights Reserved.
+ *
+ * Licensed under the MIT license. See LICENSE file in the project root for
+ * full license information.
+ *
+ * Email:   info@campfireunion.com
+ * Website: https://www.campfireunion.com
+ */
+
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
+
+using VRKeys;
+
+[RequireComponent(typeof(EventSystem))]
+public class KeyboardManager : MonoBehaviour
+{
+
+	public GameObject keyboardPrefab;
+
+	/// <summary>
+	/// Reference to the VRKeys keyboard.
+	/// </summary>
+	private Keyboard keyboard;
+
+	private EventSystem eventSystem;
+
+	private GameObject oldSelectedGO;
+
+	void Start()
+	{
+		this.eventSystem = GetComponent<EventSystem>();
+		GameObject keyboardGO = Instantiate(keyboardPrefab);
+		keyboard = keyboardGO.GetComponent<Keyboard>();
+
+		//keyboard.Enable();
+		oldSelectedGO = eventSystem.currentSelectedGameObject;
+
+		keyboard.OnSubmit.AddListener(HandleSubmit);
+		keyboard.OnCancel.AddListener(HandleCancel);
+
+		keyboard.Disable();
+	}
+
+	private void OnDisable()
+	{
+		keyboard.OnSubmit.RemoveListener(HandleSubmit);
+		keyboard.OnCancel.RemoveListener(HandleCancel);
+
+		keyboard.Disable();
+	}
+
+	public void Update()
+	{
+		if (oldSelectedGO != eventSystem.currentSelectedGameObject)
+		{
+			//New element selected
+			oldSelectedGO = eventSystem.currentSelectedGameObject;
+			InputField selectedInputField = oldSelectedGO.GetComponent<InputField>();
+			if(selectedInputField != null)
+			{
+				keyboard.Enable();
+				keyboard.activeInputField = selectedInputField;
+			}
+			else
+			{
+				keyboard.Disable();
+				keyboard.activeInputField = null;
+			}
+		}
+	}
+
+	public void HandleSubmit(string text)
+	{
+		keyboard.Disable();
+		oldSelectedGO = null;
+		eventSystem.SetSelectedGameObject(null);
+	}
+
+	public void HandleCancel()
+	{
+		keyboard.Disable();
+		oldSelectedGO = null;
+		eventSystem.SetSelectedGameObject(null);
+	}
+}

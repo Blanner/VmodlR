@@ -43,12 +43,7 @@ namespace VRKeys {
 			//cam.nearClipPlane = 0.1f;
 			//camera.AddComponent<AudioListener> ();
 
-			// Improves event system performance
-			Canvas canvas = keyboard.canvas.GetComponent<Canvas> ();
-			canvas.worldCamera = Camera.main;
-
 			keyboard.Enable ();
-			keyboard.SetPlaceholderMessage ("Please enter your email address");
 
 			keyboard.OnUpdate.AddListener (HandleUpdate);
 			keyboard.OnSubmit.AddListener (HandleSubmit);
@@ -94,7 +89,7 @@ namespace VRKeys {
 		/// Hide the validation message on update. Connect this to OnUpdate.
 		/// </summary>
 		public void HandleUpdate (string text) {
-			keyboard.HideValidationMessage ();
+			
 		}
 
 		/// <summary>
@@ -104,35 +99,18 @@ namespace VRKeys {
 			keyboard.DisableInput ();
 
 			if (!ValidateEmail (text)) {
-				keyboard.ShowValidationMessage ("Please enter a valid email address");
+				
 				keyboard.EnableInput ();
 				return;
 			}
 
-			StartCoroutine (SubmitEmail (text));
 		}
 
 		public void HandleCancel () {
 			Debug.Log ("Cancelled keyboard input!");
 		}
 
-		/// <summary>
-		/// Pretend to submit the email before resetting.
-		/// </summary>
-		private IEnumerator SubmitEmail (string email) {
-			keyboard.ShowInfoMessage ("Sending lots of spam, please wait... ;)");
-
-			yield return new WaitForSeconds (2f);
-
-			keyboard.ShowSuccessMessage ("Lots of spam sent to " + email);
-
-			yield return new WaitForSeconds (2f);
-
-			keyboard.HideSuccessMessage ();
-			keyboard.SetText ("");
-			keyboard.EnableInput ();
-		}
-
+	
 		private bool ValidateEmail (string text) {
 			if (!emailValidator.IsMatch (text)) {
 				return false;

@@ -9,6 +9,7 @@
  */
 
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.XR;
 using UnityEngine.Events;
 using System;
@@ -27,31 +28,12 @@ namespace VRKeys {
 	/// automatically hide OnSubmit, but rather you should call SetActive(false) when
 	/// you have finished validating the submitted text.
 	/// </summary>
-	public class Keyboard : MonoBehaviour {
+	public class Keyboard : MonoBehaviour
+	{
 
-		public GameObject UserGO;
 		public Vector3 positionRelativeToUser = new Vector3 (0f, 1.35f, 2f);
 
 		public KeyboardLayout keyboardLayout = KeyboardLayout.Qwerty;
-
-		[Space (15)]
-		public TextMeshProUGUI placeholder;
-
-		public string placeholderMessage = "Tap the keys to begin typing";
-
-		public TextMeshProUGUI displayText;
-
-		public GameObject validationNotice;
-
-		public TextMeshProUGUI validationMessage;
-
-		public GameObject infoNotice;
-
-		public TextMeshProUGUI infoMessage;
-
-		public GameObject successNotice;
-
-		public TextMeshProUGUI successMessage;
 
 		[Space (15)]
 		public Color displayTextColor = Color.black;
@@ -68,10 +50,6 @@ namespace VRKeys {
 		public float keyHeight = 0.16f;
 
 		[Space (15)]
-		public string text = "";
-
-		[Space (15)]
-		public GameObject canvas;
 
 		public GameObject leftMallet;
 
@@ -115,7 +93,7 @@ namespace VRKeys {
 		/// </summary>
 		public UnityEvent OnCancel = new UnityEvent ();
 
-		private GameObject playerSpace;
+		private GameObject player;
 
 		private GameObject leftHand;
 
@@ -127,44 +105,44 @@ namespace VRKeys {
 
 		private Layout layout;
 
+		public InputField activeInputField;
+
 		/// <summary>
 		/// Initialization.
 		/// </summary>
 		private IEnumerator Start () {
 			XRDevice.SetTrackingSpaceType (TrackingSpaceType.RoomScale);
 
-			playerSpace = UserGO;
+			player = GameObject.FindGameObjectWithTag(TagUtils.localPlayerTag);
+			Debug.Log($"Keyboard Player: {player}");
 			//playerSpace.transform.localPosition = InputTracking.GetLocalPosition (XRNode.TrackingReference);
 			//playerSpace.transform.localRotation = InputTracking.GetLocalRotation (XRNode.TrackingReference);
 
-			leftHand = new GameObject ("Left Hand");
-			rightHand = new GameObject ("Right Hand");
+			leftHand = player.transform.FindChildRecursive("LeftHandAnchor").gameObject;
+			rightHand = player.transform.FindChildRecursive("RightHandAnchor").gameObject;
 
 			yield return StartCoroutine (DoSetLanguage (keyboardLayout));
-
-			validationNotice.SetActive (false);
-			infoNotice.SetActive (false);
-			successNotice.SetActive (false);
-
-			UpdateDisplayText ();
-			PlaceholderVisibility ();
 
 			initialized = true;
 		}
 
-		private void Update () {
+		/*
+		private void Update () 
+		{
 			//playerSpace.transform.localPosition = InputTracking.GetLocalPosition (XRNode.TrackingReference);
 			//playerSpace.transform.localRotation = InputTracking.GetLocalRotation (XRNode.TrackingReference);
+			
+			leftHand.transform.localPosition = InputTracking.GetLocalPosition(XRNode.LeftHand);
+			leftHand.transform.localRotation = InputTracking.GetLocalRotation(XRNode.LeftHand);
 
-			leftHand.transform.localPosition = InputTracking.GetLocalPosition (XRNode.LeftHand);
-			leftHand.transform.localRotation = InputTracking.GetLocalRotation (XRNode.LeftHand);
-
-			rightHand.transform.localPosition = InputTracking.GetLocalPosition (XRNode.RightHand);
-			rightHand.transform.localRotation = InputTracking.GetLocalRotation (XRNode.RightHand);
+			rightHand.transform.localPosition = InputTracking.GetLocalPosition(XRNode.RightHand);
+			rightHand.transform.localRotation = InputTracking.GetLocalRotation(XRNode.RightHand);
+			
 		}
+		*/
 
 		private void PositionAndAttachMallets () {
-			transform.SetParent (playerSpace.transform, false);
+			transform.SetParent (player.transform, false);
 			transform.localPosition = positionRelativeToUser;
 
 			leftMallet.transform.SetParent (leftHand.transform);
@@ -208,10 +186,6 @@ namespace VRKeys {
 
 			disabled = false;
 
-			if (canvas != null) {
-				canvas.SetActive (true);
-			}
-
 			if (keysParent != null) {
 				keysParent.gameObject.SetActive (true);
 			}
@@ -233,10 +207,6 @@ namespace VRKeys {
 		public void Disable () {
 			disabled = true;
 
-			if (canvas != null) {
-				canvas.SetActive (false);
-			}
-
 			if (keysParent != null) {
 				keysParent.gameObject.SetActive (false);
 			}
@@ -248,29 +218,30 @@ namespace VRKeys {
 		/// Set the text value all at once.
 		/// </summary>
 		/// <param name="txt">New text value.</param>
-		public void SetText (string txt) {
-			text = txt;
-
-			UpdateDisplayText ();
-			PlaceholderVisibility ();
-
-			OnUpdate.Invoke (text);
+		public void SetText (string txt) 
+		{
+			if(activeInputField != null)
+			{
+				activeInputField.text = txt;
+				OnUpdate.Invoke(txt);
+			}
 		}
 
 		/// <summary>
 		/// Add a character to the input text.
 		/// </summary>
 		/// <param name="character">Character.</param>
-		public void AddCharacter (string character) {
-			text += character;
+		public void AddCharacter (string character) 
+		{
+			if (activeInputField != null)
+			{
+				activeInputField.text += character;
+				OnUpdate.Invoke(activeInputField.text);
 
-			UpdateDisplayText ();
-			PlaceholderVisibility ();
-
-			OnUpdate.Invoke (text);
-
-			if (shifted && character != "" && character != " ") {
-				StartCoroutine (DelayToggleShift ());
+				if (shifted && character != "" && character != " ")
+				{
+					StartCoroutine(DelayToggleShift());
+				}
 			}
 		}
 
@@ -344,30 +315,39 @@ namespace VRKeys {
 		/// <summary>
 		/// Backspace one character.
 		/// </summary>
-		public void Backspace () {
-			if (text.Length > 0) {
-				text = text.Substring (0, text.Length - 1);
+		public void Backspace () 
+		{
+			if(activeInputField != null)
+			{
+				if (activeInputField.text.Length > 0)
+				{
+					activeInputField.text = activeInputField.text.Substring(0, activeInputField.text.Length - 1);
+				}
+
+				OnUpdate.Invoke(activeInputField.text);
 			}
-
-			UpdateDisplayText ();
-			PlaceholderVisibility ();
-
-			OnUpdate.Invoke (text);
+			
 		}
 
 		/// <summary>
 		/// Submit and close the keyboard.
 		/// </summary>
-		public void Submit () {
-			OnSubmit.Invoke (text);
+		public void Submit () 
+		{
+			if (activeInputField != null)
+			{
+				OnSubmit.Invoke(activeInputField.text);
+				activeInputField = null;
+			}
 		}
 
 		/// <summary>
 		/// Cancel input and close the keyboard.
 		/// </summary>
-		public void Cancel () {
+		public void Cancel () 
+		{
+			activeInputField = null;
 			OnCancel.Invoke ();
-			Disable ();
 		}
 
 		/// <summary>
@@ -382,8 +362,6 @@ namespace VRKeys {
 			keyboardLayout = lang;
 			layout = LayoutList.GetLayout (keyboardLayout);
 
-			placeholderMessage = layout.placeholderMessage;
-
 			yield return StartCoroutine (SetupKeys ());
 
 			// Update extra keys
@@ -393,85 +371,12 @@ namespace VRKeys {
 		}
 
 		/// <summary>
-		/// Set a custom placeholder message.
-		/// </summary>
-		/// <param name="msg">Message.</param>
-		public void SetPlaceholderMessage (string msg) {
-			StartCoroutine (DoSetPlaceholderMessage (msg));
-		}
-
-		private IEnumerator DoSetPlaceholderMessage (string msg) {
-			if (!initialized) {
-				yield return new WaitUntil (() => initialized);
-			}
-
-			placeholder.text = placeholderMessage = msg;
-
-			yield break;
-		}
-
-		/// <summary>
-		/// Show the specified validation notice.
-		/// </summary>
-		/// <param name="message">Message to show.</param>
-		public void ShowValidationMessage (string message) {
-			validationMessage.text = message;
-			validationNotice.SetActive (true);
-			infoNotice.SetActive (false);
-			successNotice.SetActive (false);
-		}
-
-		/// <summary>
-		/// Show the specified input notice.
-		/// </summary>
-		/// <param name="message">Message to show.</param>
-		public void ShowInfoMessage (string message) {
-			infoMessage.text = message;
-			validationNotice.SetActive (false);
-			infoNotice.SetActive (true);
-			successNotice.SetActive (false);
-		}
-
-		/// <summary>
-		/// Show the specified success notice.
-		/// </summary>
-		/// <param name="message">Message to show.</param>
-		public void ShowSuccessMessage (string message) {
-			successMessage.text = message;
-			validationNotice.SetActive (false);
-			infoNotice.SetActive (false);
-			successNotice.SetActive (true);
-		}
-
-		/// <summary>
-		/// Hide the validation notice.
-		/// </summary>
-		public void HideValidationMessage () {
-			validationNotice.SetActive (false);
-		}
-
-		/// <summary>
-		/// Hide the info notice.
-		/// </summary>
-		public void HideInfoMessage () {
-			infoNotice.SetActive (false);
-		}
-
-		/// <summary>
-		/// Hide the success notice.
-		/// </summary>
-		public void HideSuccessMessage () {
-			successNotice.SetActive (false);
-		}
-
-		/// <summary>
 		/// Setup the keys.
 		/// </summary>
 		private IEnumerator SetupKeys () {
-			bool activeState = canvas.activeSelf;
+			bool activeState = keysParent.gameObject.activeSelf;
 
 			// Hide everything before setting up the keys
-			canvas.SetActive (false);
 			keysParent.gameObject.SetActive (false);
 
 			// Remove previous keys
@@ -569,35 +474,8 @@ namespace VRKeys {
 				yield return null;
 			}
 
-			// Reset visibility of canvas and keyboard
-			canvas.SetActive (activeState);
+			// Reset visibility of keyboard
 			keysParent.gameObject.SetActive (activeState);
-		}
-
-		/// <summary>
-		/// Update the display text, including trailing caret.
-		/// </summary>
-		private void UpdateDisplayText () {
-			string display = (text.Length > 37) ? text.Substring (text.Length - 37) : text;
-
-			displayText.text = string.Format (
-				"<#{0}>{1}</color><#{2}>_</color>",
-				ColorUtility.ToHtmlStringRGB (displayTextColor),
-				display,
-				ColorUtility.ToHtmlStringRGB (caretColor)
-			);
-		}
-
-		/// <summary>
-		/// Show/hide placeholder text.
-		/// </summary>
-		private void PlaceholderVisibility () {
-			if (text == "") {
-				placeholder.text = placeholderMessage;
-				placeholder.gameObject.SetActive (true);
-			} else {
-				placeholder.gameObject.SetActive (false);
-			}
 		}
 	}
 }

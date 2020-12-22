@@ -35,15 +35,12 @@ public class PlayerListManager : MonoBehaviourPunCallbacks
     {
         Player[] players = PhotonNetwork.PlayerList;
 
-        Debug.Log($"\nDestroy PlayerEntries: {contentTransform.childCount}");
         //Destroy all children
         int childCount = contentTransform.childCount;//this will be changing during the loop, so we have to cache it.
         for (int i = 0; i < childCount; i++)
         {
-            Debug.Log($"Destroying Entry: {i}");
             DestroyImmediate(contentTransform.GetChild(0).gameObject);
         }
-        Debug.Log($"\nNew PlayerEntriesCount: {contentTransform.childCount}");
 
         //Create a new player entry for every player in the player list
         foreach (Player player in players)
