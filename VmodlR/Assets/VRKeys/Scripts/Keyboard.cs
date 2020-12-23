@@ -6,6 +6,8 @@
  *
  * Email:   info@campfireunion.com
  * Website: https://www.campfireunion.com
+ * 
+ * Edited by Simon C. Gorissen (scg@mail.upb.de)
  */
 
 using UnityEngine;
@@ -31,7 +33,7 @@ namespace VRKeys {
 	public class Keyboard : MonoBehaviour
 	{
 
-		public Vector3 positionRelativeToUser = new Vector3 (0f, 1.35f, 2f);
+		//public Vector3 positionRelativeToUser = new Vector3 (0f, 1.35f, 2f);
 
 		public KeyboardLayout keyboardLayout = KeyboardLayout.Qwerty;
 
@@ -142,8 +144,8 @@ namespace VRKeys {
 		*/
 
 		private void PositionAndAttachMallets () {
-			transform.SetParent (player.transform, false);
-			transform.localPosition = positionRelativeToUser;
+			//transform.SetParent (player.transform, false);
+			//transform.localPosition = positionRelativeToUser;
 
 			leftMallet.transform.SetParent (leftHand.transform);
 			leftMallet.transform.localPosition = Vector3.zero;
