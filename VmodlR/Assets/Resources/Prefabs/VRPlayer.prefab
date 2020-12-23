@@ -694,6 +694,7 @@ GameObject:
   - component: {fileID: 6721422564564369543}
   - component: {fileID: 5944112943751223675}
   - component: {fileID: 4784574386495797885}
+  - component: {fileID: 3222383601314486915}
   m_Layer: 0
   m_Name: PlayerListPanel
   m_TagString: Untagged
@@ -763,6 +764,19 @@ MonoBehaviour:
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!65 &3222383601314486915
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3856117224573119995}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 355, y: 600, z: 1}
+  m_Center: {x: -175, y: 300, z: 0.51}
 --- !u!1 &3858391328164531259
 GameObject:
   m_ObjectHideFlags: 0
@@ -1840,7 +1854,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.0000019073486, y: -0.000054723983}
+  m_AnchoredPosition: {x: -0.0000019073486, y: -0.00009138499}
   m_SizeDelta: {x: -25, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &7654164764461089649
@@ -2375,6 +2389,7 @@ GameObject:
   - component: {fileID: 6182413129251165498}
   - component: {fileID: 6182413129251165499}
   - component: {fileID: 6182413129251165476}
+  - component: {fileID: 6603641097080228394}
   m_Layer: 0
   m_Name: AddElementButton
   m_TagString: Untagged
@@ -2509,6 +2524,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   buttonText: {fileID: 6182413130137556634}
   targetMenu: {fileID: 6182413129501272805}
+--- !u!65 &6603641097080228394
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6182413129251165478}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 100.15, y: 100.4, z: 1}
+  m_Center: {x: 0.405, y: -0.116, z: 0.51}
 --- !u!1 &6182413129412811527
 GameObject:
   m_ObjectHideFlags: 0
@@ -2784,6 +2812,7 @@ GameObject:
   - component: {fileID: 6182413129501272804}
   - component: {fileID: 7876717128388128616}
   - component: {fileID: 4015383328142064056}
+  - component: {fileID: 8392632136052915850}
   m_Layer: 0
   m_Name: AddMenuPanel
   m_TagString: Untagged
@@ -2852,6 +2881,19 @@ MonoBehaviour:
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!65 &8392632136052915850
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6182413129501272805}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 765, y: 150, z: 1}
+  m_Center: {x: 0, y: 50, z: 0.51}
 --- !u!1 &6182413129528298115
 GameObject:
   m_ObjectHideFlags: 0
@@ -3776,6 +3818,7 @@ GameObject:
   - component: {fileID: 3974596390936284915}
   - component: {fileID: 6629781035674284528}
   - component: {fileID: 2609167035098794762}
+  - component: {fileID: 3647576075804828651}
   m_Layer: 0
   m_Name: PlayerListButton
   m_TagString: Untagged
@@ -3936,6 +3979,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   contentTransform: {fileID: 2989188893340282831}
   PlayerListEntryPrefab: {fileID: 4275121022736209434, guid: 8775d40344c04284aba537820fa33d68, type: 3}
+--- !u!65 &3647576075804828651
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7032467541913114250}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 100.15, y: 100.4, z: 1}
+  m_Center: {x: 50, y: 50, z: 0.51}
 --- !u!1 &7783119102526437638
 GameObject:
   m_ObjectHideFlags: 0
