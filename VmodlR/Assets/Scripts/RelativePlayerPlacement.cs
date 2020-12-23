@@ -5,12 +5,21 @@ using UnityEngine;
 public class RelativePlayerPlacement : MonoBehaviour
 {
     public Vector3 PositionRelativToTarget = new Vector3(0, 1.35f, 2);
-    private Transform target;
+    public Vector3 BaseRotation = new Vector3(0, 0, 0);
+    [Tooltip("The Transform this gameObject should be place relative to. Defaults to the first Object found with Tag 'localPlayer'")]
+    public Transform target;
+
+    private Quaternion directionRotation = Quaternion.identity;
 
     // Start is called before the first frame update
     void Start()
     {
-        target = GameObject.FindGameObjectWithTag(TagUtils.localPlayerTag).transform;
+        transform.parent = null;
+
+        if (target == null)
+        {
+            target = GameObject.FindGameObjectWithTag(TagUtils.localPlayerTag).transform;
+        }
        
         if (target == null)
         {
@@ -31,11 +40,8 @@ public class RelativePlayerPlacement : MonoBehaviour
                 this.enabled = false;
             }
         }
-
-        Debug.Log($"\nTarget Position: {target.position}");
     }
 
-    // Update is called once per frame
     void Update()
     {
         float angle = Vector3.SignedAngle(Vector3.ProjectOnPlane(transform.forward, Vector3.up).normalized, Vector3.ProjectOnPlane(target.forward, Vector3.up).normalized, Vector3.up);
@@ -44,15 +50,17 @@ public class RelativePlayerPlacement : MonoBehaviour
         {
             Vector3 forward = Vector3.ProjectOnPlane(transform.forward, Vector3.up).normalized;
             forward = Quaternion.Euler(0, 90, 0) * forward;
-            transform.rotation = Quaternion.LookRotation(forward);
+            directionRotation = Quaternion.LookRotation(forward);
+            transform.rotation = directionRotation * Quaternion.Euler(BaseRotation);
         }
         else if (angle < -60)
         {
             Vector3 forward = Vector3.ProjectOnPlane(transform.forward, Vector3.up).normalized;
             forward = Quaternion.Euler(0, -90, 0) * forward;
-            transform.rotation = Quaternion.LookRotation(forward);
+            directionRotation = Quaternion.LookRotation(forward);
+            transform.rotation = directionRotation * Quaternion.Euler(BaseRotation);
         }
 
-        transform.position = target.position + transform.rotation * PositionRelativToTarget;
+        transform.position = target.position + directionRotation * PositionRelativToTarget;
     }
 }
