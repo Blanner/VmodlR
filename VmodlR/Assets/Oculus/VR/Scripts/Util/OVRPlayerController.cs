@@ -21,6 +21,10 @@ using UnityEngine;
 [RequireComponent(typeof(CharacterController))]
 public class OVRPlayerController : MonoBehaviour
 {
+	public OVRInput.Axis2D moveUpAxis = OVRInput.Axis2D.SecondaryThumbstick;//Y Button
+
+	public float moveUpDeadzone = 0.1f;
+
 	/// <summary>
 	/// The rate acceleration during movement.
 	/// </summary>
@@ -136,6 +140,7 @@ public class OVRPlayerController : MonoBehaviour
 	protected OVRCameraRig CameraRig = null;
 
 	private float MoveScale = 1.0f;
+	private float VertMoveScale = 0.75f;
 	private Vector3 MoveThrottle = Vector3.zero;
 	private float FallSpeed = 0.0f;
 	private OVRPose? InitialPose;
@@ -271,26 +276,26 @@ public class OVRPlayerController : MonoBehaviour
 		float motorDamp = (1.0f + (Damping * SimulationRate * Time.deltaTime));
 
 		MoveThrottle.x /= motorDamp;
-		MoveThrottle.y = (MoveThrottle.y > 0.0f) ? (MoveThrottle.y / motorDamp) : MoveThrottle.y;
+		MoveThrottle.y = (Mathf.Abs(MoveThrottle.y) > 0.0f) ? (MoveThrottle.y / motorDamp) : MoveThrottle.y;
 		MoveThrottle.z /= motorDamp;
 
 		moveDirection += MoveThrottle * SimulationRate * Time.deltaTime;
 
-		// Gravity
-		if (Controller.isGrounded && FallSpeed <= 0)
-			FallSpeed = ((Physics.gravity.y * (GravityModifier * 0.002f)));
-		else
-			FallSpeed += ((Physics.gravity.y * (GravityModifier * 0.002f)) * SimulationRate * Time.deltaTime);
-
+		// No Gravity enabled
+		//if (Controller.isGrounded && FallSpeed <= 0)
+		//	FallSpeed = ((Physics.gravity.y * (GravityModifier * 0.002f)));
+		//else
+		//	FallSpeed += ((Physics.gravity.y * (GravityModifier * 0.002f)) * SimulationRate * Time.deltaTime);
 		moveDirection.y += FallSpeed * SimulationRate * Time.deltaTime;
 
-
+		
 		if (Controller.isGrounded && MoveThrottle.y <= transform.lossyScale.y * 0.001f)
 		{
 			// Offset correction for uneven ground
 			float bumpUpOffset = Mathf.Max(Controller.stepOffset, new Vector3(moveDirection.x, 0, moveDirection.z).magnitude);
 			moveDirection -= bumpUpOffset * Vector3.up;
 		}
+		
 
 		if (PreCharacterMove != null)
 		{
@@ -299,6 +304,8 @@ public class OVRPlayerController : MonoBehaviour
 		}
 
 		Vector3 predictedXZ = Vector3.Scale((Controller.transform.localPosition + moveDirection), new Vector3(1, 0, 1));
+
+		//Debug.Log($"\nMoveDirection y: {moveDirection.y}\nMoveThrottle y: {MoveThrottle.y}");
 
 		// Move contoller
 		Controller.Move(moveDirection);
@@ -323,6 +330,7 @@ public class OVRPlayerController : MonoBehaviour
 			bool moveLeft = Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow);
 			bool moveRight = Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow);
 			bool moveBack = Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow);
+			
 
 			bool dpad_move = false;
 
@@ -339,6 +347,8 @@ public class OVRPlayerController : MonoBehaviour
 				dpad_move = true;
 			}
 
+			float moveUp = OVRInput.Get(moveUpAxis).y;
+
 			MoveScale = 1.0f;
 
 			if ((moveForward && moveLeft) || (moveForward && moveRight) ||
@@ -346,8 +356,8 @@ public class OVRPlayerController : MonoBehaviour
 				MoveScale = 0.70710678f;
 
 			// No positional movement if we are in the air
-			if (!Controller.isGrounded)
-				MoveScale = 0.0f;
+			//if (!Controller.isGrounded)
+			//	MoveScale = 0.0f;
 
 			MoveScale *= SimulationRate * Time.deltaTime;
 
@@ -371,8 +381,6 @@ public class OVRPlayerController : MonoBehaviour
 				MoveThrottle += ort * (transform.lossyScale.x * moveInfluence * BackAndSideDampen * Vector3.left);
 			if (moveRight)
 				MoveThrottle += ort * (transform.lossyScale.x * moveInfluence * BackAndSideDampen * Vector3.right);
-
-
 
 			moveInfluence = Acceleration * 0.1f * MoveScale * MoveScaleMultiplier;
 
@@ -403,6 +411,15 @@ public class OVRPlayerController : MonoBehaviour
 			if (primaryAxis.x > 0.0f)
 				MoveThrottle += ort * (primaryAxis.x * transform.lossyScale.x * moveInfluence * BackAndSideDampen *
 									   Vector3.right);
+
+			float vertMoveInfluence = Acceleration * 0.1f * VertMoveScale * MoveScaleMultiplier;
+
+			//Vertical Movement
+			if (moveUp <= -moveUpDeadzone)
+				MoveThrottle += ort * (moveUp * transform.lossyScale.y * vertMoveInfluence * Vector3.up);
+			if (moveUp >= moveUpDeadzone)
+				MoveThrottle += ort * (moveUp * transform.lossyScale.y * vertMoveInfluence * Vector3.up);
+			
 		}
 
 		if (EnableRotation)
@@ -523,7 +540,7 @@ public class OVRPlayerController : MonoBehaviour
 	{
 		Controller.Move(Vector3.zero);
 		MoveThrottle = Vector3.zero;
-		FallSpeed = 0.0f;
+		//FallSpeed = 0.0f;
 	}
 
 	/// <summary>

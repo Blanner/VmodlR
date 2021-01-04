@@ -1600,6 +1600,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0950df82e7936c84983497630bde5b54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  moveUpAxis: 2
+  moveUpDeadzone: 0.3
   Acceleration: 0.1
   Damping: 0.3
   BackAndSideDampen: 0.5
@@ -1610,7 +1612,7 @@ MonoBehaviour:
   FixedSpeedSteps: 0
   HmdResetsY: 1
   HmdRotatesY: 1
-  GravityModifier: 1
+  GravityModifier: 0
   useProfileData: 1
   EnableLinearMovement: 1
   EnableRotation: 1
@@ -1854,7 +1856,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.0000019073486, y: -0.00006640622}
+  m_AnchoredPosition: {x: 0, y: -0.000030239693}
   m_SizeDelta: {x: -25, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &7654164764461089649
