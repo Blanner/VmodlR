@@ -538,8 +538,10 @@ namespace Sigtrap.VrTunnellingPro {
 			Vector3 dPos = motionTarget.position - _lastPos;
 			Vector3 vel = dPos / dT;
 			//Ignore motion that was not triggered by the thumbstick
-			Vector2 thumbstickMovement = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick);
-			if ((useVelocity || useAcceleration) && (thumbstickMovement.x > .05f || thumbstickMovement.x < -.05f || thumbstickMovement.y > .05f || thumbstickMovement.y < -.05f))
+			Vector2 moveHorizStickMovement = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick);
+			float moveUpStickMovement = OVRInput.Get(OVRInput.Axis2D.SecondaryThumbstick).y;
+			if ((useVelocity || useAcceleration) 
+				&& (moveHorizStickMovement.x > .05f || moveHorizStickMovement.x < -.05f || moveHorizStickMovement.y > .05f || moveHorizStickMovement.y < -.05f || moveUpStickMovement < -.05f || moveUpStickMovement > .05f))
 			{
 				speed = vel.magnitude;
 
