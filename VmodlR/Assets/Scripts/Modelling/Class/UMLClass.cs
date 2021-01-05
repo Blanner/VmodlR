@@ -55,6 +55,15 @@ public class UMLClass : MonoBehaviourPun, IGrabListener
         connectors.Remove(connector);
     }
 
+    public void UpdateAllConnections()
+    {
+        Connector[] connectorArray = connectors.ToArray();//Cache the initial connector list, because calculateNewAttachement will modify this list (removing and re-adding each element).
+        foreach (Connector connector in connectorArray)
+        {
+            connector.CalculateNewAttachement(this);
+        }
+    }
+
     /// <summary>
     /// Makes the class ready to be moved. Connectors attached to this class will now update their positions, scale etc. to stick to the class while moving
     /// </summary>

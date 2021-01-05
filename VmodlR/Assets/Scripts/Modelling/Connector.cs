@@ -161,7 +161,7 @@ public class Connector : MonoBehaviourPun, IOnEventCallback
     /// </summary>
     public void CalculateNewAttachement(ConnectorGrabVolume connectorEndGrabVolume)
     {
-        Vector3 attachSearchOrigin = connectorEndGrabVolume.transform.position;
+        Vector3 attachSearchOrigin = originGrabVolume.transform.position + ((targetGrabVolume.transform.position - originGrabVolume.transform.position) / 2);//The mid point between both grab volumes
         Vector3 attachSearchDirection;
 
         if (originGrabVolume == connectorEndGrabVolume)
@@ -182,6 +182,22 @@ public class Connector : MonoBehaviourPun, IOnEventCallback
         {
             Debug.LogError("Called attachFromClass() with a grab volume not belonging to this connector.");
             return;
+        }
+    }
+
+    /// <summary>
+    /// Recalculates the attachement between connector and class for this connector's end that is attached to the given class
+    /// </summary>
+    /// <param name="endType"></param>
+    public void CalculateNewAttachement(UMLClass connectedClass)
+    {
+        if(connectedClass == originClass)
+        {
+            CalculateNewAttachement(originGrabVolume);
+        }
+        else if(connectedClass == targetClass)
+        {
+            CalculateNewAttachement(targetGrabVolume);
         }
     }
 
@@ -419,7 +435,7 @@ public class Connector : MonoBehaviourPun, IOnEventCallback
         newContent.Add("ClassViewID", (newAttachedClass == null) ? -1 : newAttachedClass.photonView.ViewID);
         newContent.Add("LocalConnectionPos", newLocalConnectionPos);
 
-        Debug.Log($"\nRaising Event on {gameObject.name}");
+        //Debug.Log($"\nRaising Event on {gameObject.name}");
 
         //Raise an Attach Event so all instances of this grab volume on other clients can instruct their connector to update his attach state
         RaiseEventOptions createEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.Others, CachingOption = EventCaching.AddToRoomCacheGlobal };
@@ -428,20 +444,20 @@ public class Connector : MonoBehaviourPun, IOnEventCallback
             Debug.LogError("\nCould not raise event");
         }
 
-        Debug.Log($"\nRaised Event on {gameObject.name}");
+        //Debug.Log($"\nRaised Event on {gameObject.name}");
     }
 
     public void OnEvent(EventData photonEvent)
     {
         if (EventCodes.IsUpdateOriginAttachmentEvent(photonEvent.Code) || EventCodes.IsUpdateTargetAttachmentEvent(photonEvent.Code))
         {
-            Debug.Log($"\n update target end attach state of Connector Event on {this.gameObject.name}");
+            //Debug.Log($"\n update target end attach state of Connector Event on {this.gameObject.name}");
             //extract the sent data from the event
             Hashtable eventData = (Hashtable)photonEvent.CustomData;
             int connectorViewID = (int)eventData["ConnectorViewID"];
             if (connectorViewID == photonView.ViewID)
             {
-                Debug.Log($"\nEvent triggers attaching to class on {this.gameObject.name}");
+                //Debug.Log($"\nEvent triggers attaching to class on {this.gameObject.name}");
                 //Attach/detatch
                 int classViewID = (int)eventData["ClassViewID"];
                 Vector3 localConnectionPos = (Vector3)eventData["LocalConnectionPos"];

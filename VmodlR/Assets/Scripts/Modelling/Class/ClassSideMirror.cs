@@ -4,7 +4,13 @@ using UnityEngine;
 
 public class ClassSideMirror : MonoBehaviour
 {
-    public List<ClassSide> mirroredSides = new List<ClassSide>();
+    public ClassSide[] mirroredSides;
+    public ClassScaler classScaler;
+
+    public void Start()
+    {
+        classScaler.Initialize(mirroredSides);
+    }
 
     public void LocalChangeClassName(string newName)
     {
@@ -28,6 +34,7 @@ public class ClassSideMirror : MonoBehaviour
         {
             side.LocalCreateElement(masterSynchronizer, this, elementType, elementID, elementIndex);
         }
+        classScaler.ElementAdded();
     }
 
     public void LocalMoveElement(ClassElementType elementType, int elementID, int newIndex)
@@ -44,5 +51,8 @@ public class ClassSideMirror : MonoBehaviour
         {
             side.LocalDeleteElement(elementType, elementID);
         }
+        classScaler.ElementDeleted();
     }
+
+
 }

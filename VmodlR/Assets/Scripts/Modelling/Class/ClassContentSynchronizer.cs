@@ -146,7 +146,7 @@ public class ClassContentSynchronizer : MonoBehaviourPunCallbacks, IOnEventCallb
             //check if the class that the event wants to synchronize is this class
             if (contentSynchronizerID == photonView.ViewID)
             {
-                Debug.Log("\nUpdateClassContent Event Caught");
+                //Debug.Log("\nUpdateClassContent Event Caught");
                 int[] updatedElementIDs = (int[])eventData["UpdatedElementIDs"];
                 ClassElementType elementsType = (ClassElementType)eventData["UpdatedElementsType"];
                 UpdateElementExistence(updatedElementIDs, elementsType);
@@ -180,7 +180,7 @@ public class ClassContentSynchronizer : MonoBehaviourPunCallbacks, IOnEventCallb
         if(openElementRequests.Count == 0)
         {
             //if this content synchronizer has no open Add element requests, we don't need to do anything here (the properties were changed by another contentSynchronizer)
-            Debug.Log("\nClass has no open element requests");
+            //Debug.Log("\nClass has no open element requests");
             return;
         }
         else
