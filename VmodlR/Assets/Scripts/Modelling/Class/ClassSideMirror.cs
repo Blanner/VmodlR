@@ -18,6 +18,7 @@ public class ClassSideMirror : MonoBehaviour
         {
             side.LocalChangeClassName(newName);
         }
+        classScaler.ElementStringUpdated(newName, -1);
     }
 
     public void LocalChangeElement(ClassElementType elementType, int elementID, string newValue)
@@ -26,6 +27,7 @@ public class ClassSideMirror : MonoBehaviour
         {
             side.LocalChangeElement(elementType, elementID, newValue);
         }
+        classScaler.ElementStringUpdated(newValue, elementID);
     }
 
     public void LocalCreateElement(ClassContentSynchronizer masterSynchronizer, ClassElementType elementType, int elementID, int elementIndex)
@@ -51,8 +53,6 @@ public class ClassSideMirror : MonoBehaviour
         {
             side.LocalDeleteElement(elementType, elementID);
         }
-        classScaler.ElementDeleted();
+        classScaler.ElementDeleted(elementID);
     }
-
-
 }

@@ -97,6 +97,27 @@ public class ClassSide : MonoBehaviour
         UpdateElementLayout();
     }
 
+    public ClassSideElement[] GetAllElements()
+    {
+        ClassSideElement[] elementTexts = new ClassSideElement[fields.classSideElements.Count + operations.classSideElements.Count];
+
+        int currElementIndex = 0;
+        //add all fields
+        foreach(ClassSideElement element in fields.classSideElements)
+        {
+            elementTexts[currElementIndex] = element;
+            currElementIndex++;
+        }
+        //add all operations
+        foreach (ClassSideElement element in operations.classSideElements)
+        {
+            elementTexts[currElementIndex] = element;
+            currElementIndex++;
+        }
+
+        return elementTexts;
+    }
+
     private void UpdateElementLayout()
     {
         StartCoroutine(CoroutineUpdateLayout());
