@@ -9,10 +9,23 @@ public class TaskSettings : MonoBehaviour
 {
     public const string taskKey = "IsTaskAActvie";
     public bool isTaskAActive = true;
-    
 
-    void Start() //This gets called whenever loading a new scene
+    public static TaskSettings Instance;
+
+    void Start()
     {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Debug.LogError("Too many TaskSettings instances in one scene. There must always be exactly one instance in a scene.", this);
+            this.enabled = false;
+            Destroy(gameObject);
+            return;
+        }
+
         SceneManager.sceneLoaded -= OnSceneLoaded;
         SceneManager.sceneLoaded += OnSceneLoaded;
 

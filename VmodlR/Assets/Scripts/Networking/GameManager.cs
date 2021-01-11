@@ -47,6 +47,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             Debug.LogError("Too many GameManager instances in one scene. There must always be exactly one instance in a scene.", this);
             this.enabled = false;
+            Destroy(gameObject);
             return;
         }
 

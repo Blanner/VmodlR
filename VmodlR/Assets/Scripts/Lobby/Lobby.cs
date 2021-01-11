@@ -42,9 +42,6 @@ public class Lobby : MonoBehaviourPunCallbacks
     [SerializeField]
     private Slider newRoomMaxPlayerSlider;
 
-    [SerializeField]
-    private TaskSettings taskSettings;
-
     #endregion
 
     #region Private Fields
@@ -86,11 +83,11 @@ public class Lobby : MonoBehaviourPunCallbacks
         }
         if(Input.GetKeyDown(KeyCode.B))
         {
-            taskSettings.ChangeTask(1);
+            TaskSettings.Instance.ChangeTask(1);
         }
         if (Input.GetKeyDown(KeyCode.A))
         {
-            taskSettings.ChangeTask(0);
+            TaskSettings.Instance.ChangeTask(0);
         }
     }
 
@@ -246,7 +243,7 @@ public class Lobby : MonoBehaviourPunCallbacks
             Debug.Log("Loading MainEnvironment");
 
             //Set the active task for this room as a room property
-            taskSettings.WriteTaskRoomProperty();
+            TaskSettings.Instance.WriteTaskRoomProperty();
 
             // #Critical
             // Load the Room Level. 
