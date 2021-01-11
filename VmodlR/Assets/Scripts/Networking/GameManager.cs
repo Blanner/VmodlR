@@ -50,6 +50,8 @@ public class GameManager : MonoBehaviourPunCallbacks
             return;
         }
 
+        PhotonNetwork.KeepAliveInBackground = 180;//3 minutes
+
         if (playerPrefabName == "")
         { 
             Debug.LogError("<Color=Red><b>Missing</b></Color> playerPrefab Reference. Please set it up in GameObject 'Game Manager'", this);
@@ -63,6 +65,11 @@ public class GameManager : MonoBehaviourPunCallbacks
             //Photon finds the prefab not by reference but by name. The prefab has to be located in the Assets/Resources/ directory or a subfolder of it.
             PhotonNetwork.Instantiate($"Prefabs/{playerPrefabName}", new Vector3(0f, 0f, -1 * PhotonNetwork.CurrentRoom.PlayerCount), Quaternion.identity, 0);
         }
+    }
+
+    void OnDestroy()
+    {
+        PhotonNetwork.Disconnect();
     }
 
     #endregion
