@@ -18,7 +18,6 @@ using Photon.Realtime;
 using Photon.Pun;
 
 
-
 public class Lobby : MonoBehaviourPunCallbacks
 {
     //disable warnings for private (serialized) fields not being assigned to
@@ -42,6 +41,9 @@ public class Lobby : MonoBehaviourPunCallbacks
     [Tooltip("Theslider where players set a new room's max player count")]
     [SerializeField]
     private Slider newRoomMaxPlayerSlider;
+
+    [SerializeField]
+    private TaskSettings taskSettings;
 
     #endregion
 
@@ -81,6 +83,14 @@ public class Lobby : MonoBehaviourPunCallbacks
         {
             PhotonNetwork.NickName = "UnityEditor";
             CreateRoomInternal("NewRoom");
+        }
+        if(Input.GetKeyDown(KeyCode.B))
+        {
+            taskSettings.ChangeTask(1);
+        }
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            taskSettings.ChangeTask(0);
         }
     }
 
@@ -234,6 +244,9 @@ public class Lobby : MonoBehaviourPunCallbacks
         if (PhotonNetwork.CurrentRoom.PlayerCount == 1)
         {
             Debug.Log("Loading MainEnvironment");
+
+            //Set the active task for this room as a room property
+            taskSettings.WriteTaskRoomProperty();
 
             // #Critical
             // Load the Room Level. 
