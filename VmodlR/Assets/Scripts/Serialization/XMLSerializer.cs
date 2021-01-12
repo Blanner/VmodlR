@@ -7,14 +7,35 @@ public class XMLSerializer
 
     public static void Serialize(object item, string path)
     {
+        //save file
         XmlSerializer serializer = new XmlSerializer(item.GetType());
-#if UNITY_ANDROID
-        StreamWriter writer = new StreamWriter($"/mnt/sdcard/{path}");
-#else
+#if UNITY_EDITOR
         StreamWriter writer = new StreamWriter(path);
+#else
+    #if UNITY_ANDROID
+        StreamWriter writer = new StreamWriter($"/mnt/sdcard/{path}");
+    #else
+        StreamWriter writer = new StreamWriter(path);
+    #endif
 #endif
+
         serializer.Serialize(writer.BaseStream, item);
         writer.Close();
+
+        string[] pathparts = path.Split('/');
+        string fileName = pathparts[pathparts.Length - 1];
+
+        //upload to google drive
+#if UNITY_EDITOR
+        var file = new UnityGoogleDrive.Data.File { Name = fileName, Content = File.ReadAllBytes(Application.dataPath.Replace("Assets", path)) };
+#else
+#if UNITY_ANDROID
+        var file = new UnityGoogleDrive.Data.File { Name = fileName, Content = File.ReadAllBytes($"/mnt/sdcard/{path}") };
+#else
+        var file = new UnityGoogleDrive.Data.File { Name = fileName, Content = File.ReadAllBytes(Application.dataPath.Replace("Assets", path)) };
+#endif
+#endif
+        UnityGoogleDrive.GoogleDriveFiles.Create(file).Send();
     }
 
     public static T Deserialize<T>(string path)

@@ -66,7 +66,7 @@ public class SaveSystem : MonoBehaviour
         model.connections[1] = inherit2;
         model.connections[2] = comp;
 
-        XMLSerializer.Serialize(model, "model.xml");
+        XMLSerializer.Serialize(model, "model1.xml");
     }
 
     void Update()
