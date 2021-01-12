@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<Model xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Classes>
+    <Class name="Klausur">
+      <Attributes>
+        <Attribute Content="- moduleName : string" />
+      </Attributes>
+    </Class>
+    <Class name="Task">
+      <Attributes>
+        <Attribute Content="- question : string" />
+      </Attributes>
+    </Class>
+    <Class name="CalculationTask">
+      <Attributes>
+        <Attribute Content="- answer : float" />
+      </Attributes>
+      <Operations>
+        <Operations Content="+ checkAnswer() : bool" />
+        <Operations Content="+ setAnswer(float) : void" />
+      </Operations>
+    </Class>
+    <Class name="TextTask">
+      <Attributes>
+        <Attribute Content="- answer : string" />
+      </Attributes>
+      <Operations>
+        <Operations Content="+ setAnswer(string) : void" />
+      </Operations>
+    </Class>
+  </Classes>
+  <Connections>
+    <Connection OriginClassName="TextTask" TargetClassName="Task" Type="Inheritance" />
+    <Connection OriginClassName="CalculationTask" TargetClassName="Task" Type="Inheritance" />
+    <Connection OriginClassName="Task" TargetClassName="Klausur" Type="Composition" />
+  </Connections>
+</Model>
