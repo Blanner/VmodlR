@@ -5681,10 +5681,20 @@ MonoBehaviour:
     besteht aus einer Frage. Eine Aufgabe kann entweder eine Rechenaufgabe oder eine
     Textaufgabe sein.\n\nRechenaufgaben haben eine Antwort in Form einer Flie\xDFkommazahl.
     Sie bieten au\xDFerdem die M\xF6glichkeit eine neue Antwort als Flie\xDFkommazahl
-    einzugen und zu \xFCberpr\xFCfen, ob die zuletzt eingegebene Antwort korrekt
+    einzugeben und zu \xFCberpr\xFCfen, ob die zuletzt eingegebene Antwort korrekt
     war.\n\nTextaufgaben haben eine Antwort in Form eines Textes. Dar\xFCber hinaus
     bieten sie lediglich die M\xF6glichkeit eine neue Antwort als Text einzugeben."
-  taskAEnglish: Task A English
+  taskAEnglish: "Create a Classdiagram with your partner that realizes the following
+    structure. Please only model the elements that are described in the text, so
+    do not add Getters and Setters, for example. Please also do not add multiplicities
+    or labels for connectors:\r\n\r\nA student is defined by his*her name and immatriculation
+    number. Every student can write an exam. An Exam consists of a module-name and
+    possibly multiple tasks. Each task consists of one question. Every task is either
+    a calculation task or a word problem. \r\n\nCalculation tasks have an answer
+    in the form of a floating point number. Additionally, they offer a way to input
+    a new answer as a floating point number and to check whether the last given answer
+    was correct.\r\n\nWord problems have an answer in the form of a text. Besides
+    that, they only offer a way to input a new text answer.\r"
   taskBGerman: "Erstelle gemeinsam mit deinem*r Partner*in ein Klassendiagramm, das
     folgende Struktur abbildet. Bitte setze nur um, was im Text beschrieben ist (F\xFCge
     also z.B. keine Getter und Setter hinzu). Bitte f\xFCge auch keine Multiplizit\xE4ten
@@ -5696,7 +5706,15 @@ MonoBehaviour:
     zu wechseln.\n\nJedes Motorrad enth\xE4lt eine Information dar\xFCber, ob sein
     St\xE4nder ausgeklappt oder eingeklappt ist. Dar\xFCber hinaus bietet es die
     M\xF6glichkeit diesen Status des St\xE4nders zu ver\xE4ndern."
-  taskBEnglish: Task B English
+  taskBEnglish: "Create a Classdiagram with your partner that realizes the following
+    structure. Please only model the elements that are described in the text, so
+    do not add Getters and Setters, for example. Please also do not add multiplicities
+    or labels for connectors:\r\n\r\nA street is defined by its number of lanes.
+    Every vehicle drives on a road. Each vehicle has a speed, a color and a brand.
+    A vehicle can be either a car or a motorcycle. \r\n\nEvery car has a number of
+    seats and a radio. A radio has a current frequency and offers a way to change
+    the frequency.\r\n\nA motorcycle holds the information if its stand is put up
+    or not. Additionally, it offers a way to change this state of the stand.\r"
   taskContent: {fileID: 6752844105832102016}
   taskLabel: {fileID: 6316945375776740678}
 --- !u!65 &3703875237866326706
