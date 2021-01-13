@@ -1,12 +1,140 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using System;
 
 public class SaveSystem : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public GameObject overwritePanel;
+    public GameObject errorPanel;
+    public Text errorText;
+    public GameObject successPanel;
+    public InputField fileNameInput;
+
+    private string cannotSaveFileText = "WARNING:\nThe file could not be saved!\n(File System Error)";
+    private string modelCannotBeSavedText = "WARNING:\nYou cannot save a model with loose connectors!";
+
+
+    void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.S))
+        {
+            SaveModel("savedmodel", true);
+        }
+    }
+
+    public void OnSaveModelPressed()
+    {
+        Debug.Log("\nOnSaveModelPressed");
+        SaveModel(fileNameInput.text, true);
+    }
+
+    public void OnOverwriteFilePressed()
+    {
+        Debug.Log("\nOnOverwriteSavePressed");
+        SaveModel(fileNameInput.text, false);
+    }
+
+    private void SaveModel(string path, bool checkExistance)
+    {
+        Debug.Log($"\nSaveModel: {path}; {checkExistance}");
+        if (checkExistance && XMLSerializer.FileExists(path))
+        {
+            overwritePanel.SetActive(true);
+            return;
+        }
+
+        ClassSideMirror[] classContents = FindObjectsOfType<ClassSideMirror>();
+        Connector[] connections = FindObjectsOfType<Connector>();
+
+        //Check if all classes have unique names
+        foreach (ClassSideMirror checkClass in classContents)
+        {
+            foreach (ClassSideMirror umlClass in classContents)
+            {
+                if (checkClass != umlClass && umlClass.mirroredSides[0].nameSynchronizer.className == checkClass.mirroredSides[0].nameSynchronizer.className)
+                {
+                    Debug.LogError($"Cannot save a model with duplicate class names (Class Name: {umlClass.name})");
+                    return;
+                }
+            }
+        }
+
+        //create a new model to be saved
+        SerialModel model = new SerialModel();
+        model.classes = new SerialClass[classContents.Length];
+        model.connections = new SerialConnection[connections.Length];
+
+        //Convert each class to a "SerialClass" and each Connector to a SerialConnection
+        for (int i = 0; i < classContents.Length; i++)
+        {
+            SerialClass serialClass = new SerialClass();
+            serialClass.className = classContents[i].mirroredSides[0].nameSynchronizer.className;
+            serialClass.attributes = new SerialAttribute[classContents[i].mirroredSides[0].fields.classSideElements.Count];
+            for (int j = 0; j < serialClass.attributes.Length; j++)
+            {
+                serialClass.attributes[j] = new SerialAttribute();
+                serialClass.attributes[j].content = classContents[i].mirroredSides[0].fields.classSideElements[j].Value;
+            }
+
+            serialClass.operations = new SerialOperation[classContents[i].mirroredSides[0].operations.classSideElements.Count];
+            for (int j = 0; j < serialClass.operations.Length; j++)
+            {
+                serialClass.operations[j] = new SerialOperation();
+                serialClass.operations[j].content = classContents[i].mirroredSides[0].operations.classSideElements[j].Value;
+            }
+            model.classes[i] = serialClass;
+        }
+
+        try
+        {
+
+            //Convert each Connectior to a SerialConnection
+            for (int i = 0; i < connections.Length; i++)
+            {
+                model.connections[i] = new SerialConnection();
+                //get connector type
+                if (connections[i].arrowHeadManager.activeArrowHead == null)
+                {
+                    model.connections[i].connectorType = ConnectorTypes.UndirectedAssociation;
+                }
+                else
+                {
+                    model.connections[i].connectorType = connections[i].arrowHeadManager.activeArrowHead.ConnectorType;
+                }
+                //get connector ends
+                model.connections[i].originClassName = connections[i].originClass.gameObject.GetComponent<ClassSideMirror>().mirroredSides[0].nameSynchronizer.className;
+                model.connections[i].targetClassName = connections[i].targetClass.gameObject.GetComponent<ClassSideMirror>().mirroredSides[0].nameSynchronizer.className;
+            }
+        }
+        catch(NullReferenceException )
+        {
+            Debug.LogError("You cannot save a model where one or more connectors have an end that is not attached to a class.");
+            errorText.text = modelCannotBeSavedText;
+            errorPanel.SetActive(true);
+            return;
+        }
+
+        bool serializationSuccess = XMLSerializer.Serialize(model, path);
+        if (!serializationSuccess)
+        {
+            errorText.text = cannotSaveFileText;
+            errorPanel.SetActive(true);
+        }
+        else
+        {
+            Debug.Log($"\nSaved model.");
+            successPanel.SetActive(true);
+        }
+    }
+
+    private void loadModel(string path)
+    {
+        SerialModel model = XMLSerializer.Deserialize<SerialModel>(path);
+    }
+
+    private void test()
     {
         SerialClass klausur = new SerialClass();
         klausur.className = "Klausur";
@@ -66,94 +194,7 @@ public class SaveSystem : MonoBehaviour
         model.connections[1] = inherit2;
         model.connections[2] = comp;
 
-        XMLSerializer.Serialize(model, "model1.xml");
-    }
-
-    void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.S))
-        {
-            SaveModel("savedmodel.xml");
-        }
-    }
-
-    public void SaveModel(string path)
-    {
-        ClassSideMirror[] classContents = FindObjectsOfType<ClassSideMirror>();
-        Connector[] connections = FindObjectsOfType<Connector>();
-
-        //Check if all classes have unique names
-        foreach (ClassSideMirror checkClass in classContents)
-        {
-            foreach (ClassSideMirror umlClass in classContents)
-            {
-                if (umlClass.mirroredSides[0].nameSynchronizer.className == checkClass.mirroredSides[0].nameSynchronizer.className)
-                {
-                    Debug.LogError($"Cannot save a model with duplicate class names (Class Name: {umlClass.name})");
-                    return;
-                }
-            }
-        }
-
-        //create a new model to be saved
-        SerialModel model = new SerialModel();
-        model.classes = new SerialClass[classContents.Length];
-        model.connections = new SerialConnection[connections.Length];
-
-        //Convert each class to a "SerialClass" and each Connector to a SerialConnection
-        for (int i = 0; i < classContents.Length; i++)
-        {
-            SerialClass serialClass = new SerialClass();
-            serialClass.attributes = new SerialAttribute[classContents[0].mirroredSides[0].fields.classSideElements.Count];
-            for (int j = 0; j < serialClass.attributes.Length; j++)
-            {
-                serialClass.attributes[j] = new SerialAttribute();
-                serialClass.attributes[j].content = classContents[0].mirroredSides[0].fields.classSideElements[j].Value;
-            }
-
-            serialClass.operations = new SerialOperation[classContents[0].mirroredSides[0].operations.classSideElements.Count];
-            for (int j = 0; j < serialClass.operations.Length; j++)
-            {
-                serialClass.operations[j] = new SerialOperation();
-                serialClass.operations[j].content = classContents[0].mirroredSides[0].operations.classSideElements[j].Value;
-            }
-            model.classes[i] = serialClass;
-        }
-
-        try
-        {
-
-            //Convert each Connectior to a SerialConnection
-            for (int i = 0; i < connections.Length; i++)
-            {
-                model.connections[i] = new SerialConnection();
-                //get connector type
-                if (connections[i].arrowHeadManager.activeArrowHead == null)
-                {
-                    model.connections[i].connectorType = ConnectorTypes.UndirectedAssociation;
-                }
-                else
-                {
-                    model.connections[i].connectorType = connections[i].arrowHeadManager.activeArrowHead.ConnectorType;
-                }
-                //get connector ends
-                model.connections[i].originClassName = connections[i].originClass.gameObject.GetComponent<ClassSideMirror>().mirroredSides[0].nameSynchronizer.className;
-                model.connections[i].targetClassName = connections[i].targetClass.gameObject.GetComponent<ClassSideMirror>().mirroredSides[0].nameSynchronizer.className;
-            }
-        }
-        catch(NullReferenceException )
-        {
-            Debug.LogError("You cannot save a model where one or more connectors have an end that is not attached to a class.");
-            return;
-        }
-
-        XMLSerializer.Serialize(model, path);
-        Debug.Log($"\nSaved model under: {Application.dataPath.Replace("Assets", path)}");
-    }
-
-    public void loadModel(string path)
-    {
-        SerialModel model = XMLSerializer.Deserialize<SerialModel>(path);
+        XMLSerializer.Serialize(model, "model1");
     }
 }
 

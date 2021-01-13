@@ -67,17 +67,18 @@ public class KeyboardManager : MonoBehaviour
 		{
 			//New element selected
 			oldSelectedGO = eventSystem.currentSelectedGameObject;
-			InputField selectedInputField = oldSelectedGO.GetComponent<InputField>();
-			if(selectedInputField != null)
+			if (oldSelectedGO != null)
 			{
-				keyboard.Enable();
-				keyboard.activeInputField = selectedInputField;
+				InputField selectedInputField = oldSelectedGO.GetComponent<InputField>();
+				if (selectedInputField != null)
+				{
+					keyboard.Enable();
+					keyboard.activeInputField = selectedInputField;
+					return;
+				}
 			}
-			else
-			{
-				keyboard.Disable();
-				keyboard.activeInputField = null;
-			}
+			keyboard.Disable();
+			keyboard.activeInputField = null;
 		}
 	}
 
