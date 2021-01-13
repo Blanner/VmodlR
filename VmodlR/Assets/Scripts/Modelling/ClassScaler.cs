@@ -168,9 +168,9 @@ public class ClassScaler : MonoBehaviour
     private void UpdateClassSidePosition(Transform classSide, Vector3 basePosition, Vector3 updatedClassScale)
     {
         Vector3 updatedPos = new Vector3();
-        updatedPos.x = basePosition.x * (updatedClassScale.x / 2 + 0.01f);
-        updatedPos.y = basePosition.y * (updatedClassScale.y / 2 + 0.01f);
-        updatedPos.z = basePosition.z * (updatedClassScale.z / 2 + 0.01f);
+        updatedPos.x = basePosition.x * (updatedClassScale.x / 2 + 0.001f);
+        updatedPos.y = basePosition.y * (updatedClassScale.y / 2 + 0.001f);
+        updatedPos.z = basePosition.z * (updatedClassScale.z / 2 + 0.001f);
         classSide.localPosition = updatedPos;
     }
 
