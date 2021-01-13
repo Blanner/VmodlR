@@ -28,14 +28,16 @@ public class XMLSerializer
         //upload to google drive
 #if UNITY_EDITOR
         var file = new UnityGoogleDrive.Data.File { Name = fileName, Content = File.ReadAllBytes(Application.dataPath.Replace("Assets", path)) };
-#else
-#if UNITY_ANDROID
-        var file = new UnityGoogleDrive.Data.File { Name = fileName, Content = File.ReadAllBytes($"/mnt/sdcard/{path}") };
-#else
-        var file = new UnityGoogleDrive.Data.File { Name = fileName, Content = File.ReadAllBytes(Application.dataPath.Replace("Assets", path)) };
-#endif
-#endif
         UnityGoogleDrive.GoogleDriveFiles.Create(file).Send();
+#else
+    #if UNITY_ANDROID
+        //var file = new UnityGoogleDrive.Data.File { Name = fileName, Content = File.ReadAllBytes($"/mnt/sdcard/{path}") };
+    #else
+        var file = new UnityGoogleDrive.Data.File { Name = fileName, Content = File.ReadAllBytes(Application.dataPath.Replace("Assets", path)) };
+        UnityGoogleDrive.GoogleDriveFiles.Create(file).Send();
+    #endif
+#endif
+
     }
 
     public static T Deserialize<T>(string path)
