@@ -6,6 +6,8 @@ using System;
 
 public class SaveSystem : MonoBehaviour
 {
+    public LoadUIManager loadUIManager;
+
     public GameObject overwritePanel;
     public GameObject errorPanel;
     public Text errorText;
@@ -14,7 +16,6 @@ public class SaveSystem : MonoBehaviour
 
     private string cannotSaveFileText = "WARNING:\nThe file could not be saved!\n(File System Error)";
     private string modelCannotBeSavedText = "WARNING:\nYou cannot save a model with loose connectors!";
-
 
     void Update()
     {
@@ -126,12 +127,36 @@ public class SaveSystem : MonoBehaviour
         {
             Debug.Log($"\nSaved model.");
             successPanel.SetActive(true);
+            loadUIManager.UpdateLoadModelList();
         }
     }
 
-    private void loadModel(string path)
+    public void LoadModel(string modelName)
     {
-        SerialModel model = XMLSerializer.Deserialize<SerialModel>(path);
+        try
+        {
+            string fileName = modelName + ".xme";
+#if UNITY_EDITOR
+            string filePath = Application.dataPath.Replace("Assets", fileName);
+#else
+#if UNITY_ANDROID
+        string filePath = $"/mnt/sdcard/{fileName}";
+#else
+        string filePath = Application.dataPath.Replace("Assets", fileName);
+#endif
+#endif
+
+            SerialModel model = XMLSerializer.Deserialize<SerialModel>(filePath);
+            loadUIManager.LoadSucceeded();
+            Debug.Log($"\nLoaded Model {filePath}");
+        }
+        catch(Exception e)
+        {
+            Debug.LogError("\nError in Load System");
+            Debug.LogError("\n" + e.ToString());
+            Debug.LogError("\n" + e.StackTrace);
+            loadUIManager.LoadFailed();
+        }
     }
 
     private void test()
