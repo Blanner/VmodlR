@@ -106,7 +106,7 @@ public class ClassScaler : MonoBehaviour
         }
 
         //calculate scale needed to fit longest element text 
-        float maxTextPixelWidth = measurementInputField.preferredWidth + 65 + 10;//65 is the Input field's right margin, 10 the left margin
+        float maxTextPixelWidth = measurementInputField.preferredWidth + 105 + 35;//65 is the Input field's right margin, 10 the left margin
         elementTextLengthScale = (Mathf.Ceil(maxTextPixelWidth / 25) * 25) / 800; // maxTextPixelWidth / 800 is the precise scale we would need. The rest rounds this value to 10-px steps
 
         //reset the elementLengthScale to 1 if the maximum scale needed is below 1 bacause we never want to scale a class smaller than 1
@@ -135,6 +135,7 @@ public class ClassScaler : MonoBehaviour
     {
         //Debug.Log($"Prev Class Side pos: {previousPosition}");
         Vector3 basePosition = new Vector3();
+
         //round the value to -1 if negative, 0 if it is 0, or 1 of it is positive non-zero
         basePosition.x = (previousPosition.x < 0) ? -1 : Mathf.CeilToInt(Mathf.Clamp(previousPosition.x, 0, 1));
         basePosition.y = (previousPosition.y < 0) ? -1 : Mathf.CeilToInt(Mathf.Clamp(previousPosition.y, 0, 1));
