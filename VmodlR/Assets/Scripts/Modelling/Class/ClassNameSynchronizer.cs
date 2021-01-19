@@ -29,7 +29,7 @@ public class ClassNameSynchronizer : MonoBehaviour, IOnEventCallback
     /// <summary>
     /// This is a model of the class name, we need this so we still have the previous value accessible when we are notified that input fields text was changed
     /// </summary>
-    private string className = "";
+    public string className { get; private set; } = "";
     private InputField synchronizeInputField;
 
 

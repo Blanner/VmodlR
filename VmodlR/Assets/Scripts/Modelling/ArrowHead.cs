@@ -9,6 +9,8 @@ public class ArrowHead : MonoBehaviourPun
     [Tooltip("The distance between the tip of the arrow and the point where the connector this arrow head sits on should end")]
     public float TipDistance;
 
+    public ConnectorTypes ConnectorType;
+
     /// <summary>
     /// Repositions and rotates the Arrow according to the given Position and forward Direction.
     /// </summary>

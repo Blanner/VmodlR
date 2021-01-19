@@ -100,15 +100,19 @@ public class ArrowHeadSwitcher : MonoBehaviourPun
                 break;
             case ConnectorTypes.DirectedAssociation:
                 activeArrowHead = associationHead;
+                activeArrowHead.ConnectorType = ConnectorTypes.DirectedAssociation;
                 break;
             case ConnectorTypes.Inheritance:
                 activeArrowHead = inheritanceHead;
+                activeArrowHead.ConnectorType = ConnectorTypes.Inheritance;
                 break;
             case ConnectorTypes.Aggregation:
                 activeArrowHead = aggregationHead;
+                activeArrowHead.ConnectorType = ConnectorTypes.Aggregation;
                 break;
             case ConnectorTypes.Composition:
                 activeArrowHead = compositionHead;
+                activeArrowHead.ConnectorType = ConnectorTypes.Composition;
                 break;
         }
 

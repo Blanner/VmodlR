@@ -383,6 +383,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TipDistance: 0.035
+  ConnectorType: 1
 --- !u!54 &3013448854426848696
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -665,6 +666,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TipDistance: 0.24
+  ConnectorType: 3
 --- !u!114 &8300212247555268924
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1143,6 +1145,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TipDistance: 0.145
+  ConnectorType: 2
 --- !u!114 &8300212248308809381
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1263,6 +1266,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TipDistance: 0.24
+  ConnectorType: 4
 --- !u!114 &8300212248346700634
 MonoBehaviour:
   m_ObjectHideFlags: 0
