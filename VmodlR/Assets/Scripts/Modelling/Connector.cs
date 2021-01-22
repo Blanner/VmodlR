@@ -19,11 +19,11 @@ public class Connector : MonoBehaviourPun, IOnEventCallback
     /// <summary>
     /// The class where the arrow head that belongs to this connector - if there is one - does not point. If none exists, it is irrelevant which class is the target and which the origin class
     /// </summary>
-    public UMLClass originClass;
+    public ClassConnectionHub originClass;
     /// <summary>
     /// The class where the arrow head that belongs to this connector - if there is one - points. If none exists, it is irrelevant which class is the target and which the origin class
     /// </summary>
-    public UMLClass targetClass;
+    public ClassConnectionHub targetClass;
     /// <summary>
     /// The arrow head that sits on the target end of this connector or null if this connector is not directed
     /// </summary>
@@ -118,7 +118,7 @@ public class Connector : MonoBehaviourPun, IOnEventCallback
     /// Ensures that the cached attach state event is updated acordingly
     /// </summary>
     /// <param name="destroyedClass"></param>
-    public void OnDestroyAttachedClass(UMLClass destroyedClass)
+    public void OnDestroyAttachedClass(ClassConnectionHub destroyedClass)
     {
         if(destroyedClass == targetClass)
         {
@@ -189,7 +189,7 @@ public class Connector : MonoBehaviourPun, IOnEventCallback
     /// Recalculates the attachement between connector and class for this connector's end that is attached to the given class
     /// </summary>
     /// <param name="endType"></param>
-    public void CalculateNewAttachement(UMLClass connectedClass)
+    public void CalculateNewAttachement(ClassConnectionHub connectedClass)
     {
         if(connectedClass == originClass)
         {
@@ -240,8 +240,8 @@ public class Connector : MonoBehaviourPun, IOnEventCallback
     {
         Vector3 oldLocalConnectionPointToClass = (connectorEnd == ConnectorEndType.Origin) ? localOriginConnectionPoint : localTargetConnectionPoint;
 
-        UMLClass oldAttachedClass = (connectorEnd == ConnectorEndType.Origin) ? originClass : targetClass;
-        UMLClass newAttachedClass = calculateNewConnectionToClass(attachSearchOrigin, attachSearchDirection, out Vector3 newConnectionPointWorld);
+        ClassConnectionHub oldAttachedClass = (connectorEnd == ConnectorEndType.Origin) ? originClass : targetClass;
+        ClassConnectionHub newAttachedClass = calculateNewConnectionToClass(attachSearchOrigin, attachSearchDirection, out Vector3 newConnectionPointWorld);
 
         if (newAttachedClass != null)
         {
@@ -337,14 +337,14 @@ public class Connector : MonoBehaviourPun, IOnEventCallback
     /// </summary>
     /// <param name="newConnectionPointWorld">The world space position at which the search ray consting of the searchorigin and searchDirection hit the found class or Vector.zero if no class was found.</param>
     /// <returns>The found class if there is one or null if no class was found</returns>
-    private UMLClass calculateNewConnectionToClass(Vector3 searchOrigin, Vector3 searchDirection, out Vector3 newConnectionPointWorld)
+    private ClassConnectionHub calculateNewConnectionToClass(Vector3 searchOrigin, Vector3 searchDirection, out Vector3 newConnectionPointWorld)
     {
         int classLayerMask = 1 << LayerMask.NameToLayer("Class");
         RaycastHit hitInfo;
         if (Physics.Raycast(new Ray(searchOrigin, searchDirection), out hitInfo, Properties.connectorAttachToClassDistance, classLayerMask))
         {
             Debug.Log($"Raycast hit {hitInfo.transform.name}");
-            UMLClass hitClass = hitInfo.transform.GetComponent<UMLClass>();
+            ClassConnectionHub hitClass = hitInfo.transform.GetComponent<ClassConnectionHub>();
             if (hitClass != null)
             {
                 newConnectionPointWorld = hitInfo.point;
@@ -357,7 +357,7 @@ public class Connector : MonoBehaviourPun, IOnEventCallback
         return null;
     }
 
-    private void AttachToClass(UMLClass attachClass, ConnectorEndType connectorEndType)
+    private void AttachToClass(ClassConnectionHub attachClass, ConnectorEndType connectorEndType)
     {
         //In case this end is still attached to another class, we first detach it
         DetachFromClass(connectorEndType);
@@ -409,7 +409,7 @@ public class Connector : MonoBehaviourPun, IOnEventCallback
     /// <param name="previousAttachedClass">the class that was attached to the connector end before the change</param>
     /// <param name="newAttachedClass">the class that is now (after the change) attached to the connector end</param>
     /// <param name="oldLocalConnectionPoint">the local connection point the connector end had to the <paramref name="previousAttachedClass"/></param>
-    public void RemoteUpdateAttachState(ConnectorEndType connectorEndType, UMLClass previousAttachedClass, UMLClass newAttachedClass, Vector3 oldLocalConnectionPoint)
+    public void RemoteUpdateAttachState(ConnectorEndType connectorEndType, ClassConnectionHub previousAttachedClass, ClassConnectionHub newAttachedClass, Vector3 oldLocalConnectionPoint)
     {
         Debug.Log($"\nUpdating Attach State on {gameObject.name}");
 
@@ -484,7 +484,7 @@ public class Connector : MonoBehaviourPun, IOnEventCallback
                         return;
                     }
 
-                    UMLClass attachClass = classView.transform.GetComponent<UMLClass>();
+                    ClassConnectionHub attachClass = classView.transform.GetComponent<ClassConnectionHub>();
                     if (attachClass == null)
                     {
                         Debug.LogError($"UMLClass instance not found on PhotonView {classViewID}");

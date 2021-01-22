@@ -5279,39 +5279,5 @@ PrefabInstance:
       propertyPath: m_Name
       value: OVRCameraRig
       objectReference: {fileID: 0}
-    - target: {fileID: 5824905916398867971, guid: 27fb016c7e9c5f34bbd3d58a25bd4cfb, type: 3}
-      propertyPath: m_TagString
-      value: LocalPlayer
-      objectReference: {fileID: 0}
-    - target: {fileID: 5824905916421758238, guid: 27fb016c7e9c5f34bbd3d58a25bd4cfb, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.05
-      objectReference: {fileID: 0}
-    - target: {fileID: 5824905916421758238, guid: 27fb016c7e9c5f34bbd3d58a25bd4cfb, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.05
-      objectReference: {fileID: 0}
-    - target: {fileID: 5824905916421758238, guid: 27fb016c7e9c5f34bbd3d58a25bd4cfb, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.05
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 27fb016c7e9c5f34bbd3d58a25bd4cfb, type: 3}
---- !u!1 &5824905916633756091 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5824905917197328760, guid: 27fb016c7e9c5f34bbd3d58a25bd4cfb, type: 3}
-  m_PrefabInstance: {fileID: 5824905916633756090}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &5824905916633756092
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5824905916633756091}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8c28e1a250417944dac973c208c6f81b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  keyboardPrefab: {fileID: 4026371960300241097, guid: cead4ee1fc192234a8d14124e714adb5, type: 3}

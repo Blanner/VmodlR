@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class ClassScaler : MonoBehaviour
 {
     public BoxCollider classCollider;
-    public UMLClass classConnections;
+    public ClassConnectionHub classConnections;
 
     /// <summary>
     /// The invisible input field that this class uses for measuring the pixel width each element takes up. 
