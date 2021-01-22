@@ -6656,7 +6656,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 1884745359122809287}
-  - {fileID: 3118706307151602230}
+  - {fileID: 5281777116308499457}
   - {fileID: 4375612538420049520}
   - {fileID: 1329786979554179741}
   - {fileID: 4886806173932636627}
@@ -16707,6 +16707,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9117702330244492516}
+  - component: {fileID: 5281777116308499457}
   m_Layer: 0
   m_Name: TrackingSpace
   m_TagString: Player
@@ -16734,6 +16735,21 @@ Transform:
   m_Father: {fileID: 3339680265321699607}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5281777116308499457
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9117702330244493182}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
 --- !u!1 &9117702330244493183
 GameObject:
   m_ObjectHideFlags: 0
@@ -16747,7 +16763,7 @@ GameObject:
   - component: {fileID: 9117702330244492070}
   - component: {fileID: 9117702330244492092}
   - component: {fileID: 3832274059943237224}
-  - component: {fileID: 3118706307151602230}
+  - component: {fileID: 340234625062336210}
   m_Layer: 0
   m_Name: CameraRig
   m_TagString: Player
@@ -16876,7 +16892,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   sortOrder: 0
---- !u!114 &3118706307151602230
+--- !u!114 &340234625062336210
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
