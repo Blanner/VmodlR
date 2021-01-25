@@ -99,7 +99,7 @@ public class LaserPointer : OVRCursor
             UpdateLaserBeam(_startPoint, _endPoint);
             if (cursorVisual)
             {
-                int ignoreKeyboardLayerMask = ~(1 << LayerMask.NameToLayer("Keyboard"));
+                int ignoreKeyboardLayerMask = ~(1 << LayerMask.NameToLayer("Keyboard") | 1 << LayerMask.NameToLayer("PlacementCollider"));
                 if(Physics.Raycast(new Ray(_startPoint, _endPoint - _startPoint), out RaycastHit hitInfo, maxLength, ignoreKeyboardLayerMask))
                 {
                     cursorVisual.transform.position = hitInfo.point;//_endPoint;

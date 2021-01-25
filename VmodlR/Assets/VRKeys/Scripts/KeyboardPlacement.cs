@@ -22,7 +22,7 @@ namespace VRKeys {
 		[Serializable]
 		public class PlacementSettings {
 			public Vector3 position;
-			public Quaternion rotation;
+			public Vector3 rotation;
 			public Vector3 scale;
 		}
 
@@ -66,7 +66,7 @@ namespace VRKeys {
 			}
 
 			keyboard.keyboardWrapper.transform.localPosition = settings.position;
-			keyboard.keyboardWrapper.transform.localRotation = settings.rotation;
+			keyboard.keyboardWrapper.transform.localRotation = Quaternion.Euler(settings.rotation);
 			keyboard.keyboardWrapper.transform.localScale = settings.scale;
 
 			initialScale = keyboard.keyboardWrapper.transform.localScale;
@@ -170,7 +170,7 @@ namespace VRKeys {
 
 		void SaveChanges () {
 			settings.position = keyboard.keyboardWrapper.transform.localPosition;
-			settings.rotation = keyboard.keyboardWrapper.transform.localRotation;
+			settings.rotation = keyboard.keyboardWrapper.transform.localRotation.eulerAngles;
 			settings.scale = keyboard.keyboardWrapper.transform.localScale;
 
 			PlayerPrefs.SetString (prefsKey, JsonUtility.ToJson (settings));

@@ -5367,6 +5367,50 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: Enter file name...
+--- !u!1 &4909331241284870727
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1259050643220270761}
+  - component: {fileID: 7541242323493865913}
+  m_Layer: 13
+  m_Name: KeyboardPlacementCollider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1259050643220270761
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4909331241284870727}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalPosition: {x: 0, y: 1.25, z: 0.95}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 6042906934727041429}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!65 &7541242323493865913
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4909331241284870727}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.2, y: 0.1, z: 0.1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &4953393130868485947
 GameObject:
   m_ObjectHideFlags: 0
@@ -6507,7 +6551,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 6042906934727041429}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6042906934726753723
 GameObject:
@@ -6546,6 +6590,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 1259050643220270761}
   - {fileID: 6182413129088209273}
   - {fileID: 6042906934727041425}
   - {fileID: 3339680265321699607}
@@ -7466,7 +7511,7 @@ RectTransform:
   - {fileID: 6721422564564369543}
   - {fileID: 738969653954366224}
   m_Father: {fileID: 6042906934727041429}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 57.206, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -11548,7 +11593,7 @@ Transform:
   - {fileID: 8859189570584181827}
   - {fileID: 3923392138635100020}
   m_Father: {fileID: 6042906934727041429}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8467499340696319194
 GameObject:
@@ -16395,7 +16440,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c28e1a250417944dac973c208c6f81b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  standardKeyboardPos: {x: 0, y: 0, z: 0}
   keyboardPrefab: {fileID: 4026371960300241097, guid: d37da380f1be4b64fa34d46407c6f3dd, type: 3}
+  keyboardPlacementCollider: {fileID: 4909331241284870727}
 --- !u!1 &9117702330244493175
 GameObject:
   m_ObjectHideFlags: 0
@@ -16788,7 +16835,7 @@ Transform:
   - {fileID: 9117702330244492513}
   - {fileID: 9117702330244492516}
   m_Father: {fileID: 6042906934727041429}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5299398877656158196
 MonoBehaviour:
