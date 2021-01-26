@@ -733,6 +733,7 @@ MonoBehaviour:
   caretColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   keyPrefab: {fileID: 4026371960943016601}
   keysParent: {fileID: 4029933917066584237}
+  keyboardHandle: {fileID: 4026371961580230711}
   keyWidth: 0.16
   keyHeight: 0.16
   leftMallet: {fileID: 4026371962764629129}

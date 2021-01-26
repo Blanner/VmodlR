@@ -47,6 +47,8 @@ namespace VRKeys {
 
 		public Transform keysParent;
 
+		public GameObject keyboardHandle;
+
 		public float keyWidth = 0.16f;
 
 		public float keyHeight = 0.16f;
@@ -115,6 +117,11 @@ namespace VRKeys {
 		private IEnumerator Start () {
 			XRDevice.SetTrackingSpaceType (TrackingSpaceType.RoomScale);
 
+			if (keyboardHandle == null)
+			{
+				keyboardHandle = keysParent.gameObject;//if no handle is assigned, ignore it
+			}
+
 			player = GameObject.FindGameObjectWithTag(TagUtils.localPlayerTag);
 			Debug.Log($"Keyboard Player: {player}");
 			//playerSpace.transform.localPosition = InputTracking.GetLocalPosition (XRNode.TrackingReference);
@@ -126,6 +133,7 @@ namespace VRKeys {
 			yield return StartCoroutine (DoSetLanguage (keyboardLayout));
 
 			initialized = true;
+
 		}
 
 		/*
@@ -189,6 +197,7 @@ namespace VRKeys {
 			disabled = false;
 
 			if (keysParent != null) {
+				keyboardHandle.SetActive(true);
 				keysParent.gameObject.SetActive (true);
 			}
 
@@ -210,6 +219,7 @@ namespace VRKeys {
 			disabled = true;
 
 			if (keysParent != null) {
+				keyboardHandle.SetActive(false);
 				keysParent.gameObject.SetActive (false);
 			}
 

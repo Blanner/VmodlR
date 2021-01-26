@@ -22,7 +22,6 @@ public class KeyboardManager : MonoBehaviour
 	public Vector3 standardKeyboardPos = new Vector3();
 
 	public GameObject keyboardPrefab;
-	public GameObject keyboardPlacementCollider;
 
 	/// <summary>
 	/// Reference to the VRKeys keyboard.
@@ -39,15 +38,7 @@ public class KeyboardManager : MonoBehaviour
 		GameObject keyboardGO = Instantiate(keyboardPrefab);
 		keyboard = keyboardGO.GetComponent<Keyboard>();
 
-		if (keyboardPlacementCollider != null)
-		{
-			HudColliderPlacement keyboardPlacement = keyboardPlacementCollider.AddComponent<HudColliderPlacement>();
-			keyboardPlacement.hudObject = keyboardGO;
-		}
-		else
-		{
-			keyboardGO.transform.position = standardKeyboardPos;
-		}
+		keyboardGO.transform.position = standardKeyboardPos;
 
 		//keyboard.Enable();
 		oldSelectedGO = eventSystem.currentSelectedGameObject;

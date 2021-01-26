@@ -5,11 +5,18 @@ using UnityEngine;
 public class RelativePlayerPlacement : MonoBehaviour
 {
     public Vector3 PositionRelativToTarget = new Vector3(0, 1.35f, 2);
+    public float maxPosDistance = .5f;
     public Vector3 BaseRotation = new Vector3(0, 0, 0);
+
+    public float smoothTime = 2;
+
     [Tooltip("The Transform this gameObject should be place relative to. Defaults to the first Object found with Tag 'localPlayer'")]
     public Transform target;
 
     private Quaternion directionRotation = Quaternion.identity;
+
+    private Vector3 smoothVelocity;
+    private bool smoothing = true;
 
     // Start is called before the first frame update
     void Start()
@@ -61,6 +68,15 @@ public class RelativePlayerPlacement : MonoBehaviour
             transform.rotation = directionRotation * Quaternion.Euler(BaseRotation);
         }
 
-        transform.position = target.position + directionRotation * PositionRelativToTarget;
+        Vector3 desiredPosition = target.position + directionRotation * PositionRelativToTarget;
+        if (smoothing || Vector3.Distance(desiredPosition, transform.position) >= maxPosDistance)
+        {
+            smoothing = true;
+            transform.position = Vector3.SmoothDamp(transform.position, desiredPosition, ref smoothVelocity, smoothTime * Time.deltaTime);
+            if(Vector3.Distance(transform.position, desiredPosition) < 0.01f)
+            {
+                smoothing = false;
+            }
+        }
     }
 }
