@@ -18,7 +18,7 @@ public class TaskPool : MonoBehaviour
     public Text taskLabel;
 
     private bool isTaskAActive = true;
-    private bool isLanguageGerman = true;
+    private bool isLanguageGerman = false;
 
     void Start()
     {

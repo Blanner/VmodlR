@@ -2356,7 +2356,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Deutsch
+  m_Text: English
 --- !u!1 &2252424936115534101
 GameObject:
   m_ObjectHideFlags: 0
@@ -3603,7 +3603,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Aufgabe
+  m_Text: Task
 --- !u!1 &3476224167250178210
 GameObject:
   m_ObjectHideFlags: 0
@@ -4597,7 +4597,7 @@ MonoBehaviour:
   m_CaptionImage: {fileID: 0}
   m_ItemText: {fileID: 3839047589555264802}
   m_ItemImage: {fileID: 0}
-  m_Value: 0
+  m_Value: 1
   m_Options:
     m_Options:
     - m_Text: Deutsch
@@ -11064,17 +11064,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Erstelle gemeinsam mit deinem*r Partner*in ein Klassendiagramm, das folgende
-    Struktur abbildet. Bitte setze nur um, was im Text beschrieben ist (F\xFCge also
-    z.B. keine Getter und Setter hinzu). Bitte f\xFCge auch keine Multiplizit\xE4ten
-    oder Beschriftungen f\xFCr Verbindungen hinzu:\r\n\r\nEine Stra\xDFe ist durch
-    ihre Spuranzahl definiert. Ein Fahrzeug f\xE4hrt auf einer Stra\xDFe. Jedes Fahrzeug
-    hat eine Geschwindigkeit, eine Farbe und eine Marke. Ein Fahrzeug kann entweder
-    ein Auto oder ein Motorrad sein. \r\n\nJedes Auto hat eine Sitzanzahl und ein
-    Radio. Ein Radio hat eine aktuelle Frequenz und bietet eine M\xF6glichkeit die
-    Frequenz zu wechseln. \r\n\nJedes Motorrad enth\xE4lt eine Information dar\xFCber,
-    ob sein St\xE4nde ausgeklappt oder eingeklappt ist. Dar\xFCber hinaus bietet
-    es die M\xF6glichkeit diesen Status des St\xE4nders zu ver\xE4ndern.\r\n"
+  m_Text: Placeholder
 --- !u!1 &8020788991625002056
 GameObject:
   m_ObjectHideFlags: 0
